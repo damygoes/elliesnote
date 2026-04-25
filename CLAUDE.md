@@ -62,10 +62,3 @@ types/        # TypeScript types + Zod schemas
 ### UX context (CFS)
 
 This app targets users with Chronic Fatigue Syndrome. UI must minimize cognitive load: large touch targets, minimal decisions per screen, calm visuals, no dense layouts. Prefer tap over typing; reduce interaction steps wherever possible.
-
-## AI skill files
-
-The `ai/` directory contains engineering contracts and skill guides used for AI-assisted development:
-
-- `ai/CLAUDE.md` — global role and coding standards
-- `ai/skills/` — task-specific guides: `data-modeling`, `react-native-ui`, `state-management`, `storage`, `feature-implementation`, `refactoring`, `performance`, `cfs-ux`
