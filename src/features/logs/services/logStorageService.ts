@@ -9,11 +9,13 @@ const STORAGE_KEY = 'logs:entries';
 const LogEntriesSchema = z.array(LogEntrySchema);
 
 export const logStorageService = {
-  save: async (entries: LogEntry[]): Promise<void> => {
+  save: async (entries: LogEntry[]): Promise<boolean> => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      return true;
     } catch (error) {
       logger.warn('logStorageService.save', 'Failed to save entries', error);
+      return false;
     }
   },
 

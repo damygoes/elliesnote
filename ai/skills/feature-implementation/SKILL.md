@@ -27,7 +27,7 @@ Before coding, define:
 
 Implement in this strict order:
 
-1. Types (TypeScript + Zod schema)
+1. Types + Constants (TypeScript + Zod schema + domain constants in `constants/`)
 2. Store (Zustand)
 3. Services (storage, APIs, etc.)
 4. Hooks (logic abstraction)
@@ -43,6 +43,7 @@ Each layer must be modular and isolated.
 - No cross-feature imports
 - No business logic inside components
 - No side effects inside store
+- **No magic arrays or inline constant lists** — extract to `constants/` with `as const` and derive types: `export type EnergyLevel = (typeof ENERGY_LEVELS)[number]`
 
 ---
 

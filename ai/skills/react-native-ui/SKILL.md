@@ -40,8 +40,23 @@ Before coding, define:
 
 - Use `StyleSheet` only (no inline styles)
 - Functional components only
-- Extract reusable subcomponents
+- Each component in its own file — never define sub-components inline inside a parent file
+- If a sub-component has its own props type or styles, it belongs in `ComponentName.tsx` in the same folder
 - Keep components small and focused
+- **Escape special characters in JSX text** — use `&apos;` for apostrophes, never raw `'` inside JSX text content
+
+---
+
+## Theme Tokens
+
+Always import from `@/shared/constants/theme` — never hardcode raw values in StyleSheet:
+
+- **Colors** → `Colors.light.*` — e.g. `Colors.light.primary`, `Colors.light.border`
+- **Spacing** → `Spacing.*` — e.g. `Spacing.md` for gap/padding/margin
+- **Radius** → `Radius.*` — e.g. `Radius.full` for pills/circles, `Radius.md` for inputs
+- **Typography** → spread `...Typography.*` — e.g. `...Typography.label`, `...Typography.button`
+
+If a value has no matching token, add it to the theme first.
 
 ---
 

@@ -42,6 +42,7 @@ Each feature under `src/features/<name>/` follows this internal layout:
 
 ```ts
 components/   # UI — presentation only
+constants/    # Feature-scoped domain constants and derived types
 hooks/        # Logic hooks
 services/     # Side effects (AsyncStorage, APIs)
 store/        # Zustand store

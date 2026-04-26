@@ -86,6 +86,7 @@ When generating code:
 - Keep files modular and small
 - Do not include unnecessary comments
 - Do not explain unless explicitly asked
+- **Escape special characters in JSX text** — use `&apos;` for apostrophes (`'`), never raw `'` inside JSX text content
 
 ---
 
@@ -110,6 +111,19 @@ When asked to refactor:
 
 ---
 
+## Theme Tokens
+
+All UI styles must use tokens from `@/shared/constants/theme` — never hardcode raw values:
+
+- **Colors** → `Colors.light.*` (e.g. `Colors.light.primary`, `Colors.light.text_secondary`)
+- **Spacing** → `Spacing.*` for all padding, margin, and gap (e.g. `Spacing.md`, `Spacing.xl`)
+- **Radius** → `Radius.*` for all `borderRadius` (e.g. `Radius.md`, `Radius.full`)
+- **Typography** → spread `...Typography.*` for fontSize + fontWeight together (e.g. `...Typography.label`, `...Typography.body`)
+
+If a value has no matching token, add one to the theme rather than hardcoding it.
+
+---
+
 ## Forbidden
 
 - No large monolithic files
@@ -118,6 +132,9 @@ When asked to refactor:
 - No mixing UI + business logic
 - No direct AsyncStorage usage inside components (must go through services)
 - No direct `console.*` calls — use `logger` instead
+- **No inline sub-components defined inside a parent file** — every component with its own props or styles gets its own `ComponentName.tsx` file in the same folder
+- **No hardcoded colors, font sizes, spacing, or radius values in StyleSheet** — use theme tokens
+- **No magic arrays or inline constant lists in components** — extract to `constants/` (e.g. `ENERGY_LEVELS`, `SYMPTOMS`) and derive types with `as const` + `typeof`
 
 ---
 
