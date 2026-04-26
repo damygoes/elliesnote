@@ -18,11 +18,9 @@ export type Symptom = (typeof SYMPTOMS)[number];
 // --- Schema ---
 
 export const LogEntrySchema = z.object({
-  id: z.string(),
+  id: z.uuid(),
   userId: z.uuid(),
-  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: 'Invalid date format',
-  }),
+  date: z.iso.datetime(),
   energyLevel: z.number().int().min(1).max(5),
   symptoms: z.array(z.enum(SYMPTOMS)).min(1),
   notes: z.string().trim().optional(),

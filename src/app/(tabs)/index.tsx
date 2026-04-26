@@ -1,13 +1,13 @@
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { LogEntryScreen } from '@/features/logs/components/LogEntryScreen';
+import { TodayScreen } from '@/features/logs/screens/TodayScreen';
 import { Colors } from '@/shared/constants/theme';
 
-export default function LogScreen() {
+export default function TodayTab() {
   return (
     <SafeAreaView style={styles.container}>
-      <LogEntryScreen />
+      <TodayScreen />
     </SafeAreaView>
   );
 }
