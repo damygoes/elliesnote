@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
+import { DEFAULT_USER_ID } from '@/shared/constants/user';
+import { v4 as uuid } from 'uuid';
 import { useCreateLogEntry } from '../hooks/useCreateLogEntry';
 import { SYMPTOMS, type Symptom } from '../types/log-entry';
 import { EnergySelector } from './EnergySelector';
@@ -41,8 +43,9 @@ export const LogEntryScreen = ({ onSave }: Props) => {
     const now = new Date();
 
     await createEntry({
-      id: `${now.getTime()}-${Math.random().toString(36).slice(2, 7)}`,
-      date: now.toISOString().split('T')[0],
+      id: uuid(),
+      userId: DEFAULT_USER_ID,
+      date: now.toISOString(),
       energyLevel,
       symptoms: selectedSymptoms,
       notes: notes.trim() || undefined,

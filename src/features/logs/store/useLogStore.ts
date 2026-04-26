@@ -21,8 +21,9 @@ export const useLogStore = create<LogState & LogActions>((set) => ({
 
   addEntry: (entry) =>
     set((state) => {
+      const day = (iso: string) => iso.slice(0, 10);
       const existingIndex = state.entries.findIndex(
-        (e) => e.date === entry.date,
+        (e) => day(e.date) === day(entry.date),
       );
 
       if (existingIndex !== -1) {
@@ -55,4 +56,8 @@ export const useUpdateEntry = () => useLogStore((state) => state.updateEntry);
 export const useDeleteEntry = () => useLogStore((state) => state.deleteEntry);
 
 export const useEntryByDate = (date: string) =>
-  useLogStore((state) => state.entries.find((entry) => entry.date === date));
+  useLogStore((state) =>
+    state.entries.find(
+      (entry) => entry.date.slice(0, 10) === date.slice(0, 10),
+    ),
+  );

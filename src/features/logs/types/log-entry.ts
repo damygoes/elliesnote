@@ -19,6 +19,7 @@ export type Symptom = (typeof SYMPTOMS)[number];
 
 export const LogEntrySchema = z.object({
   id: z.string(),
+  userId: z.uuid(),
   date: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: 'Invalid date format',
   }),
