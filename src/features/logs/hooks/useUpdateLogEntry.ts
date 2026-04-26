@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
 import { logStorageService } from '../services/logStorageService';
-import { useLogActions, useLogStore } from '../store/useLogStore';
+import { useUpdateEntry, useLogStore } from '../store/useLogStore';
 import type { LogEntry } from '../types/log-entry';
 
 export const useUpdateLogEntry = () => {
-  const { updateEntry: applyUpdate } = useLogActions();
+  const applyUpdate = useUpdateEntry();
   const [isError, setIsError] = useState(false);
 
   const updateEntry = async (entry: LogEntry): Promise<void> => {

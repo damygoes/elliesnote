@@ -19,7 +19,7 @@ type Props = {
 };
 
 export const LogEntryScreen = ({ onSave }: Props) => {
-  const { createEntry, isError } = useCreateLogEntry();
+  const { createEntry, isError, isSaved } = useCreateLogEntry();
 
   const [energyLevel, setEnergyLevel] = useState<number | null>(null);
   const [selectedSymptoms, setSelectedSymptoms] = useState<Symptom[]>([]);
@@ -33,7 +33,7 @@ export const LogEntryScreen = ({ onSave }: Props) => {
     );
   };
 
-  const canSave = energyLevel !== null && selectedSymptoms.length > 0;
+  const canSave = energyLevel !== null;
 
   const handleSave = async () => {
     if (!canSave) return;
@@ -92,6 +92,8 @@ export const LogEntryScreen = ({ onSave }: Props) => {
           textAlignVertical="top"
         />
       </View>
+
+      {isSaved && <Text style={styles.savedText}>Saved</Text>}
 
       {isError && (
         <Text style={styles.errorText}>
@@ -154,6 +156,11 @@ const styles = StyleSheet.create({
     color: Colors.light.text_primary,
     backgroundColor: Colors.light.surface,
     minHeight: 88,
+  },
+  savedText: {
+    ...Typography.caption,
+    color: Colors.light.primary,
+    textAlign: 'center',
   },
   errorText: {
     ...Typography.caption,

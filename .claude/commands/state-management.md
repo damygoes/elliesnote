@@ -31,6 +31,20 @@ Before creating a store:
 - Expose derived reads as standalone hooks: `export const useEntryByDate = (date: string) => useLogStore(...)`
 - Do **not** add getter methods (functions that only call `get()`) inside the store
 - Do **not** use `useShallow` — Zustand v5 already shallow-compares selector outputs; it is redundant
+- **Never select multiple actions into a plain object** — returning `{ addEntry, updateEntry }` from a selector always produces a new reference, causing an infinite render loop. Select each action individually:
+
+  ```ts
+  // WRONG — infinite loop
+  export const useLogActions = () =>
+    useLogStore((state) => ({
+      addEntry: state.addEntry,
+      updateEntry: state.updateEntry,
+    }));
+
+  // CORRECT — stable references
+  export const useAddEntry = () => useLogStore((state) => state.addEntry);
+  export const useUpdateEntry = () => useLogStore((state) => state.updateEntry);
+  ```
 
 ---
 

@@ -50,12 +50,9 @@ export const useLogStore = create<LogState & LogActions>((set) => ({
 
 export const useEntries = () => useLogStore((state) => state.entries);
 
-export const useLogActions = () =>
-  useLogStore((state) => ({
-    addEntry: state.addEntry,
-    updateEntry: state.updateEntry,
-    deleteEntry: state.deleteEntry,
-  }));
+export const useAddEntry = () => useLogStore((state) => state.addEntry);
+export const useUpdateEntry = () => useLogStore((state) => state.updateEntry);
+export const useDeleteEntry = () => useLogStore((state) => state.deleteEntry);
 
 export const useEntryByDate = (date: string) =>
   useLogStore((state) => state.entries.find((entry) => entry.date === date));
