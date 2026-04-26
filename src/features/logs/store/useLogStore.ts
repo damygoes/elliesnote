@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { useShallow } from 'zustand/shallow';
 
 import type { LogEntry } from '../types/log-entry';
 
@@ -13,15 +12,28 @@ type LogActions = {
   addEntry: (entry: LogEntry) => void;
   updateEntry: (entry: LogEntry) => void;
   deleteEntry: (id: string) => void;
-  getEntryByDate: (date: string) => LogEntry | undefined;
 };
 
 // --- Store ---
 
-export const useLogStore = create<LogState & LogActions>((set, get) => ({
+export const useLogStore = create<LogState & LogActions>((set) => ({
   entries: [],
 
-  addEntry: (entry) => set((state) => ({ entries: [...state.entries, entry] })),
+  addEntry: (entry) =>
+    set((state) => {
+      const existingIndex = state.entries.findIndex(
+        (e) => e.date === entry.date,
+      );
+
+      if (existingIndex !== -1) {
+        // overwrite existing entry for that date
+        const updated = [...state.entries];
+        updated[existingIndex] = entry;
+        return { entries: updated };
+      }
+
+      return { entries: [...state.entries, entry] };
+    }),
 
   updateEntry: (entry) =>
     set((state) => ({
@@ -29,9 +41,9 @@ export const useLogStore = create<LogState & LogActions>((set, get) => ({
     })),
 
   deleteEntry: (id) =>
-    set((state) => ({ entries: state.entries.filter((e) => e.id !== id) })),
-
-  getEntryByDate: (date) => get().entries.find((e) => e.date === date),
+    set((state) => ({
+      entries: state.entries.filter((entry) => entry.id !== id),
+    })),
 }));
 
 // --- Selectors ---
@@ -39,11 +51,11 @@ export const useLogStore = create<LogState & LogActions>((set, get) => ({
 export const useEntries = () => useLogStore((state) => state.entries);
 
 export const useLogActions = () =>
-  useLogStore(
-    useShallow((state) => ({
-      addEntry: state.addEntry,
-      updateEntry: state.updateEntry,
-      deleteEntry: state.deleteEntry,
-      getEntryByDate: state.getEntryByDate,
-    })),
-  );
+  useLogStore((state) => ({
+    addEntry: state.addEntry,
+    updateEntry: state.updateEntry,
+    deleteEntry: state.deleteEntry,
+  }));
+
+export const useEntryByDate = (date: string) =>
+  useLogStore((state) => state.entries.find((entry) => entry.date === date));

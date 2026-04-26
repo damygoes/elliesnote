@@ -25,8 +25,10 @@ This skill ensures safe and consistent data persistence.
 
 ## Error Handling
 
-- Handle failures gracefully
-- Never crash the app
+- Handle failures gracefully — never crash the app
+- **Never use empty catch blocks** — always use `logger.warn(tag, message, error)` from `@/services/logger`; never call `console.warn` directly
+- **Wrap `JSON.parse` in its own inner try-catch** — it throws on malformed strings independently of AsyncStorage errors; a single outer catch is not sufficient
+- Schema validation failures are silent fallbacks (return `[]`), but AsyncStorage and parse failures must be logged
 
 ---
 

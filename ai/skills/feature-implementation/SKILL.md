@@ -46,6 +46,15 @@ Each layer must be modular and isolated.
 
 ---
 
+## Logging
+
+- All error logging in services must use `logger` from `@/services/logger` — never `console.*` directly
+- `logger.warn(tag, message, error)` for recoverable failures (e.g. storage read/write)
+- `logger.error(tag, message, error)` for unexpected failures
+- Tag format: `'serviceName.methodName'`
+
+---
+
 ## Code Requirements
 
 - TypeScript only (no `any`)

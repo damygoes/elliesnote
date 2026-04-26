@@ -100,6 +100,16 @@ When asked to refactor:
 
 ---
 
+## Logging
+
+- **Always use `logger` from `@/services/logger`** — never call `console.warn`, `console.error`, etc. directly
+- Use `logger.warn(tag, message, error)` for recoverable failures in services
+- Use `logger.error(tag, message, error)` for unexpected or unrecoverable failures
+- Tag format: `'ClassName.methodName'` (e.g. `'logStorageService.load'`)
+- `debug` and `info` are stripped in production automatically — use them freely in dev paths
+
+---
+
 ## Forbidden
 
 - No large monolithic files
@@ -107,6 +117,7 @@ When asked to refactor:
 - No duplicated logic
 - No mixing UI + business logic
 - No direct AsyncStorage usage inside components (must go through services)
+- No direct `console.*` calls — use `logger` instead
 
 ---
 

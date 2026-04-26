@@ -22,6 +22,16 @@ Before creating a store:
 - One store per feature
 - No side effects inside store
 - Keep state minimal
+- Store holds **state + mutations only** — no query or getter logic
+- Derived reads (e.g. find by id/date) belong in selector hooks outside the store, not as store methods
+
+---
+
+## Selectors
+
+- Expose derived reads as standalone hooks: `export const useEntryByDate = (date: string) => useLogStore(...)`
+- Do **not** add getter methods (functions that only call `get()`) inside the store
+- Do **not** use `useShallow` — Zustand v5 already shallow-compares selector outputs; it is redundant
 
 ---
 
