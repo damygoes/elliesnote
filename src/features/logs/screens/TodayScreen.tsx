@@ -6,11 +6,13 @@ import { formatDate } from '@/shared/utils/date';
 import { TodayEmptyState } from '../components/TodayEmptyState';
 import { TodayEntryCard } from '../components/TodayEntryCard';
 import { useLogs } from '../hooks/useLogs';
+import { useMissingDays } from '../hooks/useMissingDays';
 import { useTodayEntry } from '../hooks/useTodayEntry';
 
 export const TodayScreen = () => {
   const { isLoading } = useLogs();
   const todayEntry = useTodayEntry();
+  const missingDays = useMissingDays();
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -25,6 +27,11 @@ export const TodayScreen = () => {
         />
       ) : (
         <TodayEmptyState />
+      )}
+      {missingDays.length > 0 && (
+        <Text style={styles.missedHint}>
+          You have a few days you can fill in later.
+        </Text>
       )}
     </ScrollView>
   );
@@ -47,6 +54,10 @@ const styles = StyleSheet.create({
   },
   loading: {
     ...Typography.body,
+    color: Colors.light.text_secondary,
+  },
+  missedHint: {
+    ...Typography.caption,
     color: Colors.light.text_secondary,
   },
 });
