@@ -1,4 +1,3 @@
-import * as Crypto from 'expo-crypto';
 import { useEffect, useState } from 'react';
 import {
   ScrollView,
@@ -9,23 +8,41 @@ import {
   View,
 } from 'react-native';
 
-import { userContext } from '@/services/userContext';
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
+import { toDateString } from '@/shared/utils/date';
+import { router } from 'expo-router';
 import { useCreateLogEntry } from '../hooks/useCreateLogEntry';
-import { SYMPTOMS, type Symptom } from '../types/log-entry';
+import { useUpdateLogEntry } from '../hooks/useUpdateLogEntry';
+import { LogEntry, SYMPTOMS, type Symptom } from '../types/log-entry';
 import { EnergySelector } from './EnergySelector';
 import { SymptomToggle } from './SymptomToggle';
 
 type Props = {
+  existingEntry?: LogEntry;
+  userId?: string;
+  selectedDate?: string;
   onSave?: () => void;
 };
 
-export const LogEntryForm = ({ onSave }: Props) => {
-  const { createEntry, isError, isSaved } = useCreateLogEntry();
+export const LogEntryForm = ({
+  existingEntry,
+  userId,
+  selectedDate,
+  onSave,
+}: Props) => {
+  const { createEntry, isError: createError, isSaved } = useCreateLogEntry();
+  const { updateEntry, isError: updateError } = useUpdateLogEntry();
+  const isError = existingEntry ? updateError : createError;
 
-  const [energyLevel, setEnergyLevel] = useState<number | null>(null);
-  const [selectedSymptoms, setSelectedSymptoms] = useState<Symptom[]>([]);
-  const [notes, setNotes] = useState('');
+  const isToday = selectedDate === toDateString();
+
+  const [energyLevel, setEnergyLevel] = useState<number | null>(
+    existingEntry?.energyLevel ?? null,
+  );
+  const [selectedSymptoms, setSelectedSymptoms] = useState<Symptom[]>(
+    existingEntry?.symptoms ?? [],
+  );
+  const [notes, setNotes] = useState(existingEntry?.notes ?? '');
 
   useEffect(() => {
     if (!isSaved) return;
@@ -49,17 +66,31 @@ export const LogEntryForm = ({ onSave }: Props) => {
 
     const now = new Date();
 
-    await createEntry({
-      id: Crypto.randomUUID(),
-      userId: userContext.getCurrentUserId(),
-      date: now.toISOString(),
+    const baseEntry = {
+      id: existingEntry?.id ?? crypto.randomUUID(),
+
+      userId,
+
+      date: new Date(selectedDate!).toISOString(),
+
       energyLevel,
+
       symptoms: selectedSymptoms,
+
       notes: notes.trim() || undefined,
-      createdAt: now.getTime(),
-    });
+
+      createdAt: existingEntry?.createdAt ?? now.getTime(),
+    };
+
+    if (existingEntry) {
+      await updateEntry({ ...baseEntry, userId: userId! });
+    } else {
+      await createEntry({ ...baseEntry, userId: userId! });
+    }
 
     onSave?.();
+
+    router.back();
   };
 
   return (
@@ -69,7 +100,9 @@ export const LogEntryForm = ({ onSave }: Props) => {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.section}>
-        <Text style={styles.label}>How&apos;s your energy today?</Text>
+        <Text style={styles.label}>
+          {isToday ? "How's your energy today?" : 'How was your energy?'}
+        </Text>
         <Text style={styles.hint}>1 = very low · 5 = good</Text>
         <EnergySelector value={energyLevel} onChange={setEnergyLevel} />
       </View>

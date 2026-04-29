@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
 import { formatDate } from '@/shared/utils/date';
@@ -14,6 +14,17 @@ export const TodayScreen = () => {
   const todayEntry = useTodayEntry();
   const missingDays = useMissingDays();
 
+  const handleEditToday = () => {
+    router.navigate('/(tabs)/log');
+  };
+
+  const handleEditMissingDay = (date: string) => {
+    router.navigate({
+      pathname: '/(tabs)/log',
+      params: { date },
+    });
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.date}>{formatDate(new Date())}</Text>
@@ -21,17 +32,16 @@ export const TodayScreen = () => {
       {isLoading ? (
         <Text style={styles.loading}>Loading…</Text>
       ) : todayEntry ? (
-        <TodayEntryCard
-          entry={todayEntry}
-          onEdit={() => router.navigate('/(tabs)/log')}
-        />
+        <TodayEntryCard entry={todayEntry} onEdit={handleEditToday} />
       ) : (
         <TodayEmptyState />
       )}
       {missingDays.length > 0 && (
-        <Text style={styles.missedHint}>
-          You have a few days you can fill in later.
-        </Text>
+        <TouchableOpacity onPress={() => handleEditMissingDay(missingDays[0])}>
+          <Text style={styles.missedHint}>
+            You can fill in previous days anytime
+          </Text>
+        </TouchableOpacity>
       )}
     </ScrollView>
   );

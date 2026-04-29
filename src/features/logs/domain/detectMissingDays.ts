@@ -1,3 +1,5 @@
+import { toDateString } from '@/shared/utils/date';
+
 type DetectMissingDaysParams = {
   entries: { date: string }[];
   today?: string; // optional override for testing
@@ -15,7 +17,7 @@ export const detectMissingDays = ({
 
   const getDate = (d: string) => new Date(d);
 
-  const format = (date: Date) => date.toISOString().slice(0, 10);
+  const format = toDateString;
 
   const addDays = (date: Date, days: number) => {
     const day = new Date(date);
