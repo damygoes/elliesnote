@@ -15,12 +15,12 @@ export const TodayScreen = () => {
   const missingDays = useMissingDays();
 
   const handleEditToday = () => {
-    router.navigate('/(tabs)/log');
+    router.navigate('/(app)/(protected)/(tabs)/log');
   };
 
   const handleEditMissingDay = (date: string) => {
     router.navigate({
-      pathname: '/(tabs)/log',
+      pathname: '/(app)/(protected)/(tabs)/log',
       params: { date },
     });
   };
