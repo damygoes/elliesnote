@@ -123,7 +123,7 @@ export const Radius = {
 export const Typography = {
   label: {
     fontSize: 17,
-    fontWeight: '600' as const,
+    fontWeight: '400' as const,
   },
   body: {
     fontSize: 15,
@@ -138,7 +138,11 @@ export const Typography = {
     fontWeight: '400' as const,
   },
   button: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '600' as const,
+  },
+  buttonLarge: {
+    fontSize: 24,
     fontWeight: '700' as const,
   },
 } as const;
