@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   buttons: {
-    gap: Spacing.md,
+    gap: Spacing.lg,
   },
   deleteButton: {
     backgroundColor: Colors.light.error,

@@ -33,7 +33,7 @@ export default function ProtectedLayout() {
           options={{
             presentation: 'formSheet',
             headerShown: false,
-            sheetAllowedDetents: isIPad ? [1] : [0.65],
+            sheetAllowedDetents: isIPad ? [1] : [0.5],
             headerShadowVisible: false,
           }}
         />
