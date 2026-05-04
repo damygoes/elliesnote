@@ -1,3 +1,4 @@
+import { useUser } from '@clerk/clerk-expo';
 import { userContext } from '@/services/userContext';
 import { toDateString } from '@/shared/utils/date';
 import { useLocalSearchParams } from 'expo-router';
@@ -10,6 +11,7 @@ type Props = {
 
 export const LogEntryScreen = ({ onSave }: Props) => {
   const { date } = useLocalSearchParams();
+  const { user } = useUser();
 
   const userId = userContext.getCurrentUserId();
 
@@ -24,6 +26,7 @@ export const LogEntryScreen = ({ onSave }: Props) => {
       existingEntry={existingEntry}
       userId={userId}
       selectedDate={selectedDate}
+      firstName={user?.firstName ?? undefined}
       onSave={onSave}
     />
   );

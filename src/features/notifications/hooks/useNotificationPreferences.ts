@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@clerk/clerk-expo';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -6,6 +7,23 @@ export type NotificationPreferences = {
   morningMinute: number;
   eveningMinute: number;
 };
+
+const CACHE_KEY = '@elliesnote/notification-preferences';
+
+async function readCache(): Promise<NotificationPreferences | null> {
+  try {
+    const raw = await AsyncStorage.getItem(CACHE_KEY);
+    return raw ? (JSON.parse(raw) as NotificationPreferences) : null;
+  } catch {
+    return null;
+  }
+}
+
+async function writeCache(data: NotificationPreferences): Promise<void> {
+  try {
+    await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  } catch {}
+}
 
 export const useNotificationPreferences = () => {
   const { getToken } = useAuth();
@@ -19,30 +37,47 @@ export const useNotificationPreferences = () => {
   useEffect(() => {
     let cancelled = false;
 
-    const load = async () => {
+    const init = async () => {
+      // Show cached preferences immediately — nearly instant
+      const cached = await readCache();
+      if (!cancelled && cached) {
+        setPreferences(cached);
+        setIsLoading(false);
+      }
+
+      // Background refresh from API
       try {
         const token = await getTokenRef.current();
         const res = await fetch(
           `${process.env.EXPO_PUBLIC_API_URL}/api/me/notification-settings`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
-        if (!res.ok) return;
+        if (!res.ok || cancelled) return;
         const json = await res.json();
-        if (!cancelled) setPreferences(json.data);
+        if (!cancelled) {
+          setPreferences(json.data);
+          writeCache(json.data);
+        }
       } finally {
         if (!cancelled) setIsLoading(false);
       }
     };
 
-    load();
+    init();
     return () => {
       cancelled = true;
     };
-  }, []); // fetch once on mount; getToken is accessed via ref to stay current
+  }, []);
 
   const updatePreferences = useCallback(
     async (next: Partial<NotificationPreferences>) => {
-      setPreferences((prev) => (prev ? { ...prev, ...next } : null));
+      // Optimistic update + cache in one step
+      setPreferences((prev) => {
+        if (!prev) return null;
+        const updated = { ...prev, ...next };
+        writeCache(updated);
+        return updated;
+      });
       const token = await getTokenRef.current();
       await fetch(
         `${process.env.EXPO_PUBLIC_API_URL}/api/me/notification-settings`,

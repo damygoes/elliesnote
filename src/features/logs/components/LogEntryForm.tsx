@@ -21,6 +21,7 @@ type Props = {
   existingEntry?: LogEntry;
   userId?: string;
   selectedDate?: string;
+  firstName?: string;
   onSave?: () => void;
 };
 
@@ -28,6 +29,7 @@ export const LogEntryForm = ({
   existingEntry,
   userId,
   selectedDate,
+  firstName,
   onSave,
 }: Props) => {
   const { createEntry, isError: createError, isSaved } = useCreateLogEntry();
@@ -100,8 +102,14 @@ export const LogEntryForm = ({
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.section}>
-        <Text style={styles.label}>
-          {isToday ? "How's your energy today?" : 'How was your energy?'}
+        <Text style={styles.energyQuestion}>
+          {isToday
+            ? firstName
+              ? `How's your energy today, ${firstName}?`
+              : "How's your energy today?"
+            : firstName
+              ? `How was your energy, ${firstName}?`
+              : 'How was your energy?'}
         </Text>
         <Text style={styles.hint}>1 = very low · 5 = good</Text>
         <EnergySelector value={energyLevel} onChange={setEnergyLevel} />
@@ -171,6 +179,12 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: Spacing.md,
+  },
+  energyQuestion: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: Colors.light.text_primary,
+    lineHeight: 30,
   },
   label: {
     ...Typography.label,
