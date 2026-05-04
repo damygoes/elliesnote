@@ -1,18 +1,28 @@
 import {
-  ScrollView,
+  Switch,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 
 import { useNotificationPreferences } from '@/features/notifications/hooks/useNotificationPreferences';
-import { notificationService } from '@/features/notifications/services/notificationService';
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
 
-// --- HourStepper ---
+function formatMinuteOfDay(minute: number): string {
+  const h = Math.floor(minute / 60);
+  const m = minute % 60;
+  const period = h < 12 ? 'AM' : 'PM';
+  const displayHour = h % 12 === 0 ? 12 : h % 12;
+  const displayMin = m.toString().padStart(2, '0');
+  return `${displayHour}:${displayMin} ${period}`;
+}
 
-const HourStepper = ({
+const STEP = 15;
+
+const TimeStepper = ({
   label,
   value,
   onChange,
@@ -26,18 +36,18 @@ const HourStepper = ({
     <View style={styles.row}>
       <TouchableOpacity
         style={styles.stepButton}
-        onPress={() => onChange((value + 23) % 24)}
+        onPress={() => onChange((value - STEP + 1440) % 1440)}
         accessibilityLabel={`Decrease ${label}`}
         accessibilityRole="button"
       >
         <Text style={styles.stepButtonText}>−</Text>
       </TouchableOpacity>
 
-      <Text style={styles.value}>{value}:00</Text>
+      <Text style={styles.value}>{formatMinuteOfDay(value)}</Text>
 
       <TouchableOpacity
         style={styles.stepButton}
-        onPress={() => onChange((value + 1) % 24)}
+        onPress={() => onChange((value + STEP) % 1440)}
         accessibilityLabel={`Increase ${label}`}
         accessibilityRole="button"
       >
@@ -47,41 +57,49 @@ const HourStepper = ({
   </View>
 );
 
-// --- Screen ---
-
 export const NotificationSettingsScreen = () => {
   const { preferences, updatePreferences, isLoading } =
     useNotificationPreferences();
 
   if (isLoading || !preferences) {
-    return <Text style={styles.loading}>Loading…</Text>;
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator color={Colors.light.primary} />
+      </View>
+    );
   }
-
-  const handleMorningChange = (morningHour: number) => {
-    updatePreferences({ ...preferences, morningHour });
-    notificationService.scheduleReminders(morningHour, preferences.eveningHour);
-  };
-
-  const handleEveningChange = (eveningHour: number) => {
-    updatePreferences({ ...preferences, eveningHour });
-    notificationService.scheduleReminders(preferences.morningHour, eveningHour);
-  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.title}>Reminders</Text>
 
-      <HourStepper
-        label="Morning reminder"
-        value={preferences.morningHour}
-        onChange={handleMorningChange}
-      />
+      <View style={styles.toggleRow}>
+        <Text style={styles.toggleLabel}>Enable reminders</Text>
+        <Switch
+          value={preferences.enabled}
+          onValueChange={(enabled) => updatePreferences({ enabled })}
+          trackColor={{
+            false: Colors.light.border,
+            true: Colors.light.primary,
+          }}
+          thumbColor={Colors.light.on_primary}
+        />
+      </View>
 
-      <HourStepper
-        label="Evening reminder"
-        value={preferences.eveningHour}
-        onChange={handleEveningChange}
-      />
+      {preferences.enabled && (
+        <>
+          <TimeStepper
+            label="Morning reminder"
+            value={preferences.morningMinute}
+            onChange={(morningMinute) => updatePreferences({ morningMinute })}
+          />
+          <TimeStepper
+            label="Evening reminder"
+            value={preferences.eveningMinute}
+            onChange={(eveningMinute) => updatePreferences({ eveningMinute })}
+          />
+        </>
+      )}
     </ScrollView>
   );
 };
@@ -95,8 +113,23 @@ const styles = StyleSheet.create({
     padding: Spacing.xl,
     gap: Spacing.xl,
   },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.light.background_primary,
+  },
   title: {
     ...Typography.label,
+    color: Colors.light.text_primary,
+  },
+  toggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  toggleLabel: {
+    ...Typography.body,
     color: Colors.light.text_primary,
   },
   section: {
@@ -114,7 +147,6 @@ const styles = StyleSheet.create({
   stepButton: {
     width: 44,
     height: 44,
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -129,9 +161,5 @@ const styles = StyleSheet.create({
   value: {
     ...Typography.label,
     color: Colors.light.text_primary,
-  },
-  loading: {
-    ...Typography.body,
-    color: Colors.light.text_secondary,
   },
 });
