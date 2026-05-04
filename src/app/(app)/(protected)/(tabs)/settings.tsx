@@ -1,13 +1,13 @@
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { NotificationSettingsScreen } from '@/features/settings/screens/NotificationSettingsScreen';
+import { SettingsScreen } from '@/features/settings/screens/SettingsScreen';
 import { Colors } from '@/shared/constants/theme';
 
 export default function SettingsTab() {
   return (
     <SafeAreaView style={styles.container}>
-      <NotificationSettingsScreen />
+      <SettingsScreen />
     </SafeAreaView>
   );
 }

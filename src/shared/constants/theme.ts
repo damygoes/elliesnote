@@ -121,6 +121,10 @@ export const Radius = {
 // --------------------------------------------------
 
 export const Typography = {
+  heading: {
+    fontSize: 32,
+    fontWeight: '700' as const,
+  },
   label: {
     fontSize: 17,
     fontWeight: '400' as const,

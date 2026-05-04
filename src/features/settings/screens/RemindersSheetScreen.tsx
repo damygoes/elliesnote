@@ -1,15 +1,17 @@
 import {
-  Switch,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
   ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useNotificationPreferences } from '@/features/notifications/hooks/useNotificationPreferences';
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
+import { SheetHeader } from '../components/SheetHeader';
 
 function formatMinuteOfDay(minute: number): string {
   const h = Math.floor(minute / 60);
@@ -57,71 +59,76 @@ const TimeStepper = ({
   </View>
 );
 
-export const NotificationSettingsScreen = () => {
+export const RemindersSheetScreen = () => {
   const { preferences, updatePreferences, isLoading } =
     useNotificationPreferences();
 
-  if (isLoading || !preferences) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator color={Colors.light.primary} />
-      </View>
-    );
-  }
-
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Reminders</Text>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
+      <SheetHeader title="Reminders" />
 
-      <View style={styles.toggleRow}>
-        <Text style={styles.toggleLabel}>Enable reminders</Text>
-        <Switch
-          value={preferences.enabled}
-          onValueChange={(enabled) => updatePreferences({ enabled })}
-          trackColor={{
-            false: Colors.light.border,
-            true: Colors.light.primary,
-          }}
-          thumbColor={Colors.light.on_primary}
-        />
-      </View>
+      {isLoading || !preferences ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator color={Colors.light.primary} />
+        </View>
+      ) : (
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.content}
+        >
+          <View style={styles.toggleRow}>
+            <Text style={styles.toggleLabel}>Enable reminders</Text>
+            <Switch
+              value={preferences.enabled}
+              onValueChange={(enabled) => updatePreferences({ enabled })}
+              trackColor={{
+                false: Colors.light.border,
+                true: Colors.light.primary,
+              }}
+              thumbColor={Colors.light.on_primary}
+            />
+          </View>
 
-      {preferences.enabled && (
-        <>
-          <TimeStepper
-            label="Morning reminder"
-            value={preferences.morningMinute}
-            onChange={(morningMinute) => updatePreferences({ morningMinute })}
-          />
-          <TimeStepper
-            label="Evening reminder"
-            value={preferences.eveningMinute}
-            onChange={(eveningMinute) => updatePreferences({ eveningMinute })}
-          />
-        </>
+          {preferences.enabled && (
+            <>
+              <TimeStepper
+                label="Morning reminder"
+                value={preferences.morningMinute}
+                onChange={(morningMinute) =>
+                  updatePreferences({ morningMinute })
+                }
+              />
+              <TimeStepper
+                label="Evening reminder"
+                value={preferences.eveningMinute}
+                onChange={(eveningMinute) =>
+                  updatePreferences({ eveningMinute })
+                }
+              />
+            </>
+          )}
+        </ScrollView>
       )}
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background_primary,
-  },
-  content: {
-    padding: Spacing.xl,
-    gap: Spacing.xl,
+    gap: Spacing.lg,
   },
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.light.background_primary,
   },
-  title: {
-    ...Typography.label,
-    color: Colors.light.text_primary,
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    padding: Spacing.xl,
+    gap: Spacing.xl,
   },
   toggleRow: {
     flexDirection: 'row',
