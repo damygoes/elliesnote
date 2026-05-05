@@ -16,42 +16,43 @@ export const SettingsScreen = () => {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.screenTitle}>Settings</Text>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionLabel}>Profile</Text>
-        <View style={styles.card}>
-          <SettingsRow
-            label="Profile info"
-            onPress={() => router.push('/settings/profile')}
-          />
+      <View style={styles.contentWrapper}>
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Profile</Text>
+          <View style={styles.card}>
+            <SettingsRow
+              label="Profile info"
+              onPress={() => router.push('/settings/profile')}
+            />
+          </View>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionLabel}>Reminders</Text>
-        <View style={styles.card}>
-          <SettingsRow
-            label="Notifications"
-            onPress={() => router.push('/settings/reminders')}
-          />
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Reminders</Text>
+          <View style={styles.card}>
+            <SettingsRow
+              label="Notifications"
+              onPress={() => router.push('/settings/reminders')}
+            />
+          </View>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionLabel}>Account</Text>
-        <View style={styles.card}>
-          <SettingsRow
-            label="Sign out"
-            onPress={handleSignOut}
-            showChevron={false}
-          />
-          <View style={styles.divider} />
-          <SettingsRow
-            label="Delete account"
-            onPress={() => router.push('/settings/delete-account')}
-            destructive
-            showChevron={false}
-          />
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Account</Text>
+          <View style={styles.card}>
+            <SettingsRow
+              label="Sign out"
+              onPress={handleSignOut}
+              showChevron={false}
+            />
+            <View style={styles.divider} />
+            <SettingsRow
+              label="Delete account"
+              onPress={() => router.push('/settings/delete-account')}
+              destructive
+              showChevron={false}
+            />
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -61,11 +62,14 @@ export const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background_primary,
+  },
+  contentWrapper: {
+    flex: 1,
+    gap: Spacing.xl,
   },
   content: {
     padding: Spacing.xl,
-    gap: Spacing.xl,
+    gap: Spacing['3xl'],
   },
   screenTitle: {
     fontSize: Typography.subtitle.fontSize,

@@ -5,16 +5,30 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native';
+import * as Notifications from 'expo-notifications';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
+import { useNotificationTapHandler } from '@/features/notifications/hooks/useNotificationTapHandler';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+
+// Show notifications when the app is foregrounded
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  useNotificationTapHandler();
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
