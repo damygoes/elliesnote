@@ -116,7 +116,7 @@ export const RemindersSheetScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: Spacing.lg,
+    gap: Spacing.md,
   },
   loadingContainer: {
     flex: 1,

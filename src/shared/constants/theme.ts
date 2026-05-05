@@ -125,6 +125,10 @@ export const Typography = {
     fontSize: 32,
     fontWeight: '700' as const,
   },
+  subtitle: {
+    fontSize: 28,
+    fontWeight: '600' as const,
+  },
   label: {
     fontSize: 17,
     fontWeight: '400' as const,

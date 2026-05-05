@@ -36,13 +36,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: Spacing.lg,
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.sm,
     minHeight: 54,
-    backgroundColor: Colors.light.surface,
+    backgroundColor: Colors.light.background_primary,
   },
   label: {
-    ...Typography.body,
+    ...Typography.label,
     color: Colors.light.text_primary,
   },
   destructiveLabel: {

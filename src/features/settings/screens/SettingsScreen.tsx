@@ -68,12 +68,12 @@ const styles = StyleSheet.create({
     gap: Spacing.xl,
   },
   screenTitle: {
-    fontSize: 28,
-    fontWeight: '700',
+    fontSize: Typography.subtitle.fontSize,
+    fontWeight: Typography.subtitle.fontWeight,
     color: Colors.light.text_primary,
   },
   section: {
-    gap: Spacing.sm,
+    gap: Spacing.md,
     borderWidth: 0.8,
     borderColor: Colors.light.border,
     borderRadius: Radius.lg,
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
   },
   sectionLabel: {
-    ...Typography.caption,
+    ...Typography.body,
     color: Colors.light.text_secondary,
     paddingHorizontal: Spacing.sm,
   },
@@ -98,6 +98,5 @@ const styles = StyleSheet.create({
   divider: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: Colors.light.text_secondary,
-    marginLeft: Spacing.lg,
   },
 });

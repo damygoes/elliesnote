@@ -13,7 +13,7 @@ export function BackButton() {
     >
       <Ionicons
         name="chevron-back"
-        size={28}
+        size={20}
         color={Colors.light.text_primary}
       />
       <Text style={styles.label}>Back</Text>
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   label: {
     color: Colors.light.text_primary,
     marginLeft: 4,
-    fontSize: Typography.label.fontSize,
-    fontWeight: Typography.label.fontWeight,
+    fontSize: Typography.body.fontSize,
+    fontWeight: Typography.body.fontWeight,
   },
 });

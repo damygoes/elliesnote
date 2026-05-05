@@ -3,11 +3,11 @@ import { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { SheetHeader } from '../components/SheetHeader';
-import { useUserProfile } from '../hooks/useUserProfile';
 import { Button } from '@/shared/components/ui/Button';
 import { FormField } from '@/shared/components/ui/FormField';
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
+import { SheetHeader } from '../components/SheetHeader';
+import { useUserProfile } from '../hooks/useUserProfile';
 
 export const ProfileSheetScreen = () => {
   const { profile, save, isSaving, error } = useUserProfile();
@@ -97,7 +97,7 @@ export const ProfileSheetScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: Spacing.lg,
+    gap: Spacing.md,
   },
   scrollView: {
     flex: 1,

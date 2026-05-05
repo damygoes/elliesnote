@@ -1,5 +1,6 @@
 import { RequireAuth } from '@/features/auth/components/RequireAuth';
 import { useRegisterPushToken } from '@/features/notifications/hooks/useRegisterPushToken';
+import { Colors } from '@/shared/constants/theme';
 import { isIPad } from '@/shared/utils/isIPad';
 import { Stack } from 'expo-router';
 
@@ -8,7 +9,12 @@ export default function ProtectedLayout() {
 
   return (
     <RequireAuth>
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: Colors.light.background_primary },
+        }}
+      >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen
           name="settings/profile"

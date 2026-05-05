@@ -1,6 +1,7 @@
+import { Colors, Spacing, Typography } from '@/shared/constants/theme';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Colors, Spacing } from '@/shared/constants/theme';
 
 interface SheetHeaderProps {
   title: string;
@@ -11,13 +12,12 @@ export const SheetHeader = ({ title }: SheetHeaderProps) => (
     <View style={styles.header}>
       <Text style={styles.title}>{title}</Text>
       <TouchableOpacity
-        style={styles.closeButton}
         onPress={() => router.back()}
         accessibilityLabel="Close"
         accessibilityRole="button"
         hitSlop={8}
       >
-        <Text style={styles.closeIcon}>✕</Text>
+        <Ionicons name="close" size={24} color={Colors.light.text_secondary} />
       </TouchableOpacity>
     </View>
     <View style={styles.divider} />
@@ -26,32 +26,20 @@ export const SheetHeader = ({ title }: SheetHeaderProps) => (
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingTop: Spacing.xxl,
+    paddingTop: Spacing.xl,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.xl,
-    paddingBottom: Spacing.xl,
+    paddingVertical: Spacing.md,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: Typography.subtitle.fontSize,
+    fontWeight: Typography.subtitle.fontWeight,
+    lineHeight: 28,
     color: Colors.light.text_primary,
-  },
-  closeButton: {
-    width: 32,
-    height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.light.border,
-    borderRadius: 16,
-  },
-  closeIcon: {
-    fontSize: 13,
-    color: Colors.light.text_secondary,
-    lineHeight: 15,
   },
   divider: {
     height: StyleSheet.hairlineWidth,
