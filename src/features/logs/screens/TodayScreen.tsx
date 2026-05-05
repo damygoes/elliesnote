@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
-import { formatDate } from '@/shared/utils/date';
+import { formatDate, toDateString } from '@/shared/utils/date';
 import { getGreeting } from '@/shared/utils/greeting';
 import { TodayEmptyState } from '../components/TodayEmptyState';
 import { TodayEntryCard } from '../components/TodayEntryCard';
@@ -24,7 +24,10 @@ export const TodayScreen = () => {
   const missingDays = useMissingDays();
 
   const handleEditToday = () => {
-    router.navigate('/(app)/(protected)/(tabs)/log');
+    router.navigate({
+      pathname: '/(app)/(protected)/(tabs)/log',
+      params: { date: toDateString() },
+    });
   };
 
   const handleEditMissingDay = (date: string) => {

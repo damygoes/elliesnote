@@ -15,11 +15,12 @@ export const LogEntryScreen = ({ onSave }: Props) => {
 
   const userId = userContext.getCurrentUserId();
 
-  const selectedDate = typeof date === 'string' ? date : toDateString();
+  const hasDateParam = typeof date === 'string';
+  const selectedDate = hasDateParam ? date : toDateString();
 
   const entryForDate = useEntryByDate(selectedDate);
   const existingEntry =
-    entryForDate?.userId === userId ? entryForDate : undefined;
+    hasDateParam && entryForDate?.userId === userId ? entryForDate : undefined;
 
   return (
     <LogEntryForm

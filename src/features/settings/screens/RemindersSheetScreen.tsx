@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useNotificationPreferences } from '@/features/notifications/hooks/useNotificationPreferences';
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
-import { SheetHeader } from '../components/SheetHeader';
+import { SheetHeader } from '@/shared/components/SheetHeader';
 
 function formatMinuteOfDay(minute: number): string {
   const h = Math.floor(minute / 60);

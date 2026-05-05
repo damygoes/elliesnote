@@ -21,6 +21,7 @@ export default function TabLayout() {
           elevation: 5,
           height: 80,
           paddingTop: 8,
+          paddingHorizontal: 14,
         },
         tabBarLabelStyle: {
           fontSize: Typography.caption.fontSize,
@@ -52,6 +53,15 @@ export default function TabLayout() {
           title: 'Explore',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="sparkles" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="history"
+        options={{
+          title: 'History',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="list.bullet" color={color} />
           ),
         }}
       />

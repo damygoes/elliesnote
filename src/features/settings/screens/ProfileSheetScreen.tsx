@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '@/shared/components/ui/Button';
 import { FormField } from '@/shared/components/ui/FormField';
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
-import { SheetHeader } from '../components/SheetHeader';
+import { SheetHeader } from '@/shared/components/SheetHeader';
 import { useUserProfile } from '../hooks/useUserProfile';
 
 export const ProfileSheetScreen = () => {

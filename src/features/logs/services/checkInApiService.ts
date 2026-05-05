@@ -16,9 +16,7 @@ function mapRowToEntry(row: ApiRow): LogEntry {
   return {
     id: row.id,
     userId: userContext.getCurrentUserId(),
-    date: row.checkInDate
-      ? `${row.checkInDate}T00:00:00.000Z`
-      : new Date().toISOString(),
+    date: row.checkInDate ? `${row.checkInDate}T00:00:00.000Z` : row.createdAt,
     energyLevel: row.energyLevel,
     symptoms: row.symptoms.filter((s): s is Symptom =>
       (SYMPTOMS as readonly string[]).includes(s),
@@ -33,20 +31,27 @@ export const checkInApiService = {
     const token = await getToken();
     if (!token) return;
 
-    await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/check-ins`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+    const res = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/api/check-ins`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          energyLevel: entry.energyLevel,
+          symptoms: entry.symptoms,
+          notes: entry.notes,
+          checkInDate: entry.date.slice(0, 10),
+          createdAt: new Date(entry.createdAt).toISOString(),
+        }),
       },
-      body: JSON.stringify({
-        energyLevel: entry.energyLevel,
-        symptoms: entry.symptoms,
-        notes: entry.notes,
-        checkInDate: entry.date.slice(0, 10),
-        createdAt: new Date(entry.createdAt).toISOString(),
-      }),
-    });
+    );
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Save failed: ${res.status} ${body}`);
+    }
   },
 
   async fetchAll(getToken: GetToken): Promise<LogEntry[]> {
