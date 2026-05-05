@@ -16,7 +16,6 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 // Show notifications when the app is foregrounded
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
     shouldShowBanner: true,

@@ -22,7 +22,7 @@ export const LogEntrySchema = z.object({
   userId: z.uuid(),
   date: z.iso.datetime(),
   energyLevel: z.number().int().min(1).max(5),
-  symptoms: z.array(z.enum(SYMPTOMS)).min(1),
+  symptoms: z.array(z.enum(SYMPTOMS)),
   notes: z.string().trim().optional(),
   createdAt: z.number().int().positive(), // timestamp (ms)
 });

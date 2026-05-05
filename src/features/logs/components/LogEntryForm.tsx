@@ -1,3 +1,4 @@
+import * as ExpoCrypto from 'expo-crypto';
 import { useEffect, useState } from 'react';
 import {
   ScrollView,
@@ -69,7 +70,7 @@ export const LogEntryForm = ({
     const now = new Date();
 
     const baseEntry = {
-      id: existingEntry?.id ?? crypto.randomUUID(),
+      id: existingEntry?.id ?? ExpoCrypto.randomUUID(),
 
       userId,
 
@@ -100,6 +101,7 @@ export const LogEntryForm = ({
       style={styles.container}
       contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets
     >
       <View style={styles.section}>
         <Text style={styles.energyQuestion}>
