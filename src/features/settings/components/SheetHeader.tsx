@@ -33,7 +33,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.lg,
   },
   title: {
     fontSize: Typography.subtitle.fontSize,
