@@ -6,7 +6,7 @@ import { Colors } from '@/shared/constants/theme';
 
 export default function ExploreTab() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <ExploreScreen />
     </SafeAreaView>
   );

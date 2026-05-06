@@ -38,6 +38,16 @@ export const SettingsScreen = () => {
         </View>
 
         <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Integrations</Text>
+          <View style={styles.card}>
+            <SettingsRow
+              label="Apple Health"
+              onPress={() => router.push('/settings/integrations')}
+            />
+          </View>
+        </View>
+
+        <View style={styles.section}>
           <Text style={styles.sectionLabel}>Account</Text>
           <View style={styles.card}>
             <SettingsRow

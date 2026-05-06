@@ -35,6 +35,15 @@ export default function ProtectedLayout() {
           }}
         />
         <Stack.Screen
+          name="settings/integrations"
+          options={{
+            presentation: 'formSheet',
+            headerShown: false,
+            sheetAllowedDetents: isIPad ? [1] : [0.65],
+            headerShadowVisible: false,
+          }}
+        />
+        <Stack.Screen
           name="settings/delete-account"
           options={{
             presentation: 'formSheet',

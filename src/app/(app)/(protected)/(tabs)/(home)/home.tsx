@@ -6,7 +6,7 @@ import { Colors } from '@/shared/constants/theme';
 
 export default function TodayTab() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <TodayScreen />
     </SafeAreaView>
   );

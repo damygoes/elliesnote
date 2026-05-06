@@ -1,7 +1,9 @@
+import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
-import { useFocusEffect } from 'expo-router';
 
+import { HealthConnectCard } from '@/features/health/components/HealthConnectCard';
+import { useHealthSync } from '@/features/health/hooks/useHealthSync';
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
 import { EnergyChart } from '../components/EnergyChart';
 import { InsightCard } from '../components/InsightCard';
@@ -13,6 +15,8 @@ export const ExploreScreen = () => {
   const [range, setRange] = useState<Range>(7);
   const { stats, days, streak, insight, isLoading, hasError, refresh } =
     useExploreData(range);
+
+  useHealthSync(days);
 
   const isMounted = useRef(false);
   useFocusEffect(
@@ -50,6 +54,9 @@ export const ExploreScreen = () => {
       />
 
       <InsightCard message={insight} isLoading={isLoading} />
+
+      <Text style={styles.sectionLabel}>Health</Text>
+      <HealthConnectCard />
     </ScrollView>
   );
 };

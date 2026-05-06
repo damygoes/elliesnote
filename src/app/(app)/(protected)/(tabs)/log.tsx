@@ -6,7 +6,7 @@ import { Colors } from '@/shared/constants/theme';
 
 export default function LogTab() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <LogEntryScreen />
     </SafeAreaView>
   );

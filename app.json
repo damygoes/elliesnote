@@ -33,6 +33,13 @@
     "plugins": [
       "expo-router",
       [
+        "react-native-health",
+        {
+          "healthSharePermission": "Elliesnote reads sleep, heart rate, and activity data to help you understand your energy patterns.",
+          "healthUpdatePermission": "Elliesnote does not write to Apple Health."
+        }
+      ],
+      [
         "expo-notifications",
         {
           "icon": "./src/assets/images/icon.png",
