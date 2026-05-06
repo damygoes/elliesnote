@@ -1,23 +1,25 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@clerk/clerk-expo';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getTzOffsetMinutes } from '@/shared/utils/tzOffset';
 
-export type StatsSeries = {
-  dayKey: string; // "YYYY-MM-DD"
-  energyAvg: number | null;
+export type DataPoint = {
+  dayKey: string;
+  dayIndex: number;
+  energyLevel: number;
 };
 
 export type ExploreData = {
-  stats: StatsSeries[];
+  stats: DataPoint[];
+  days: string[];
   streak: number;
   insight: string | null;
 };
 
 export type Range = 7 | 14 | 30;
 
-const cacheKey = (range: Range) => `@elliesnote/explore-${range}`;
+const cacheKey = (range: Range) => `@elliesnote/explore-v2-${range}`;
 
 async function readCache(range: Range): Promise<ExploreData | null> {
   try {
@@ -41,11 +43,14 @@ export const useExploreData = (range: Range) => {
 
   const [data, setData] = useState<ExploreData>({
     stats: [],
+    days: [],
     streak: 0,
     insight: null,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -70,7 +75,7 @@ export const useExploreData = (range: Range) => {
 
         const [statsRes, streakRes, insightRes] = await Promise.all([
           fetch(
-            `${base}/api/check-ins/stats?range=${range}&bucket=day&tzOffsetMinutes=${tz}`,
+            `${base}/api/check-ins/stats?range=${range}&tzOffsetMinutes=${tz}`,
             { headers },
           ),
           fetch(`${base}/api/check-ins/streak?tzOffsetMinutes=${tz}`, {
@@ -97,26 +102,16 @@ export const useExploreData = (range: Range) => {
 
         if (cancelled) return;
 
-        // PostgreSQL AVG() returns numeric as a string through the pg driver —
-        // normalize to number so the chart receives the correct type.
-        const rawSeries: {
-          dayKey: string;
-          energyAvg: string | number | null;
-        }[] = statsJson?.data?.series ?? [];
-
         const fresh: ExploreData = {
-          stats: rawSeries.map((s) => ({
-            dayKey: s.dayKey,
-            energyAvg: s.energyAvg != null ? Number(s.energyAvg) : null,
-          })),
+          stats: statsJson?.data?.entries ?? [],
+          days: statsJson?.data?.days ?? [],
           streak: Number(streakJson?.data?.streakDays ?? 0),
           insight: insightJson?.data?.message ?? null,
         };
 
         setData(fresh);
         writeCache(range, fresh);
-      } catch (err) {
-        console.log('[explore] fetch error:', err);
+      } catch {
         if (!cancelled) setHasError(true);
       } finally {
         if (!cancelled) setIsLoading(false);
@@ -127,7 +122,7 @@ export const useExploreData = (range: Range) => {
     return () => {
       cancelled = true;
     };
-  }, [range]);
+  }, [range, refreshKey]);
 
-  return { ...data, isLoading, hasError };
+  return { ...data, isLoading, hasError, refresh };
 };

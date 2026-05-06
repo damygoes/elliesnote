@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
 import { EnergyChart } from '../components/EnergyChart';
@@ -10,7 +11,16 @@ import { type Range, useExploreData } from '../hooks/useExploreData';
 
 export const ExploreScreen = () => {
   const [range, setRange] = useState<Range>(7);
-  const { stats, streak, insight, isLoading, hasError } = useExploreData(range);
+  const { stats, days, streak, insight, isLoading, hasError, refresh } =
+    useExploreData(range);
+
+  const isMounted = useRef(false);
+  useFocusEffect(
+    useCallback(() => {
+      if (isMounted.current) refresh();
+      else isMounted.current = true;
+    }, [refresh]),
+  );
 
   return (
     <ScrollView
@@ -32,7 +42,12 @@ export const ExploreScreen = () => {
       <StreakCard streakDays={streak} isLoading={isLoading} />
 
       <Text style={styles.sectionLabel}>Energy</Text>
-      <EnergyChart series={stats} range={range} isLoading={isLoading} />
+      <EnergyChart
+        stats={stats}
+        days={days}
+        range={range}
+        isLoading={isLoading}
+      />
 
       <InsightCard message={insight} isLoading={isLoading} />
     </ScrollView>

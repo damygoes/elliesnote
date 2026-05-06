@@ -18,28 +18,9 @@ const SYMPTOM_LABELS: Record<string, string> = {
   nausea: 'Nausea',
 };
 
-const DAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
-const MONTH = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-] as const;
-
-function formatEntryDate(entry: HistoryEntry): string {
-  const src = entry.checkInDate
-    ? `${entry.checkInDate}T00:00:00`
-    : entry.createdAt;
-  const d = new Date(src);
-  return `${DAY[d.getDay()]} ${d.getDate()} ${MONTH[d.getMonth()]}`;
+function formatEntryTime(createdAt: string): string {
+  const d = new Date(createdAt);
+  return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
 
 type Props = {
@@ -59,7 +40,7 @@ export const HistoryEntryRow = ({ entry, onPress }: Props) => {
       accessibilityRole="button"
     >
       <View style={styles.row}>
-        <Text style={styles.date}>{formatEntryDate(entry)}</Text>
+        <Text style={styles.time}>{formatEntryTime(entry.createdAt)}</Text>
         <View style={styles.energyRow}>
           <View style={[styles.dot, { backgroundColor: dotColor }]} />
           <Text style={styles.energyValue}>{entry.energyLevel} / 5</Text>
@@ -95,9 +76,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  date: {
+  time: {
     ...Typography.label,
-    color: Colors.light.text_primary,
+    color: Colors.light.text_secondary,
   },
   energyRow: {
     flexDirection: 'row',

@@ -29,8 +29,7 @@ export const useCreateLogEntry = () => {
     if (resetTimer.current) clearTimeout(resetTimer.current);
     resetTimer.current = setTimeout(() => setIsSaved(false), SAVED_RESET_MS);
 
-    // Persist to API in background — fire-and-forget
-    checkInApiService.save(entry, getToken).catch(() => {});
+    checkInApiService.create(entry, getToken).catch(() => {});
   };
 
   return { createEntry, isError, isSaved };

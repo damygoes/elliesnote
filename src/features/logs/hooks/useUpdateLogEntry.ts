@@ -18,8 +18,7 @@ export const useUpdateLogEntry = () => {
     const saved = await logStorageService.save(nextEntries);
     if (!saved) setIsError(true);
 
-    // POST handles upsert by (userId, checkInDate) — fire-and-forget
-    checkInApiService.save(entry, getToken).catch(() => {});
+    checkInApiService.update(entry, getToken).catch(() => {});
   };
 
   return { updateEntry, isError };

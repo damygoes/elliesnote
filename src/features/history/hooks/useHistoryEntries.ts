@@ -1,13 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@clerk/clerk-expo';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const CACHE_KEY = '@elliesnote/history-entries';
 
 export type HistoryEntry = {
   id: string;
   checkInDate: string | null;
-  createdAt: string; // ISO timestamp
+  createdAt: string;
   energyLevel: number;
   symptoms: string[];
   notes: string | null;
@@ -35,11 +35,42 @@ export const useHistoryEntries = () => {
 
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const cursorRef = useRef<string | null>(null);
+
+  const fetchPage = useCallback(async (cursor: string | null) => {
+    const token = await getTokenRef.current();
+    if (!token) return null;
+
+    const url = new URL(
+      `${process.env.EXPO_PUBLIC_API_URL}/api/check-ins/recent`,
+    );
+    if (cursor) url.searchParams.set('cursor', cursor);
+
+    const res = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return null;
+
+    const json = await res.json();
+    const data: HistoryEntry[] = json?.data ?? [];
+    const meta: { hasMore: boolean; nextCursor: string | null } =
+      json?.meta ?? { hasMore: false, nextCursor: null };
+
+    cursorRef.current = meta.nextCursor;
+    setHasMore(meta.hasMore);
+    return data;
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
+    cursorRef.current = null;
 
-    const load = async () => {
+    const init = async () => {
+      setIsLoading(true);
+
       const cached = await readCache();
       if (!cancelled && cached.length > 0) {
         setEntries(cached);
@@ -47,35 +78,44 @@ export const useHistoryEntries = () => {
       }
 
       try {
-        const token = await getTokenRef.current();
-        if (!token || cancelled) return;
-
-        const res = await fetch(
-          `${process.env.EXPO_PUBLIC_API_URL}/api/check-ins/recent?limit=50`,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-
-        if (!res.ok || cancelled) return;
-
-        const json = await res.json();
-        const fresh: HistoryEntry[] = json?.data ?? [];
-
-        if (!cancelled) {
+        const fresh = await fetchPage(null);
+        if (!cancelled && fresh) {
           setEntries(fresh);
           writeCache(fresh);
         }
       } catch {
-        // keep cached data on network failure
+        // keep cached data on failure
       } finally {
         if (!cancelled) setIsLoading(false);
       }
     };
 
-    load();
+    init();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [refreshKey, fetchPage]);
 
-  return { entries, isLoading };
+  const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
+
+  const loadMore = useCallback(async () => {
+    if (isLoadingMore || !hasMore || !cursorRef.current) return;
+    setIsLoadingMore(true);
+    try {
+      const more = await fetchPage(cursorRef.current);
+      if (more) {
+        setEntries((prev) => {
+          const next = [...prev, ...more];
+          writeCache(next);
+          return next;
+        });
+      }
+    } catch {
+      // ignore — user can retry by scrolling again
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [isLoadingMore, hasMore, fetchPage]);
+
+  return { entries, isLoading, isLoadingMore, hasMore, loadMore, refresh };
 };

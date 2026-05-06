@@ -27,7 +27,7 @@ function mapRowToEntry(row: ApiRow): LogEntry {
 }
 
 export const checkInApiService = {
-  async save(entry: LogEntry, getToken: GetToken): Promise<void> {
+  async create(entry: LogEntry, getToken: GetToken): Promise<void> {
     const token = await getToken();
     if (!token) return;
 
@@ -50,7 +50,32 @@ export const checkInApiService = {
     );
     if (!res.ok) {
       const body = await res.text();
-      throw new Error(`Save failed: ${res.status} ${body}`);
+      throw new Error(`Create failed: ${res.status} ${body}`);
+    }
+  },
+
+  async update(entry: LogEntry, getToken: GetToken): Promise<void> {
+    const token = await getToken();
+    if (!token) return;
+
+    const res = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/api/check-ins/${entry.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          energyLevel: entry.energyLevel,
+          symptoms: entry.symptoms,
+          notes: entry.notes,
+        }),
+      },
+    );
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Update failed: ${res.status} ${body}`);
     }
   },
 

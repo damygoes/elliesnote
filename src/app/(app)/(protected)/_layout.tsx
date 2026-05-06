@@ -52,6 +52,15 @@ export default function ProtectedLayout() {
             headerShadowVisible: false,
           }}
         />
+        <Stack.Screen
+          name="today/edit"
+          options={{
+            presentation: 'formSheet',
+            headerShown: false,
+            sheetAllowedDetents: isIPad ? [1] : [0.95],
+            headerShadowVisible: false,
+          }}
+        />
       </Stack>
     </RequireAuth>
   );

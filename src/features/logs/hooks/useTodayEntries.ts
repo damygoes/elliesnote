@@ -4,16 +4,16 @@ import { userContext } from '@/services/userContext';
 import { toDateString } from '@/shared/utils/date';
 import { useEntries } from '../store/useLogStore';
 
-export const useTodayEntry = () => {
+export const useTodayEntries = () => {
   const entries = useEntries();
   const userId = userContext.getCurrentUserId();
   const today = toDateString();
 
   return useMemo(
     () =>
-      entries.find(
-        (entry) => entry.date.slice(0, 10) === today && entry.userId === userId,
-      ),
+      entries
+        .filter((e) => e.date.slice(0, 10) === today && e.userId === userId)
+        .sort((a, b) => b.createdAt - a.createdAt),
     [entries, today, userId],
   );
 };

@@ -9,24 +9,25 @@ import {
 } from 'react-native';
 
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
-import { formatDate, toDateString } from '@/shared/utils/date';
+import { formatDate } from '@/shared/utils/date';
 import { getGreeting } from '@/shared/utils/greeting';
 import { TodayEmptyState } from '../components/TodayEmptyState';
 import { TodayEntryCard } from '../components/TodayEntryCard';
 import { useLogs } from '../hooks/useLogs';
 import { useMissingDays } from '../hooks/useMissingDays';
-import { useTodayEntry } from '../hooks/useTodayEntry';
+import { useTodayEntries } from '../hooks/useTodayEntries';
+import type { LogEntry } from '../types/log-entry';
 
 export const TodayScreen = () => {
   const { user } = useUser();
   const { isLoading } = useLogs();
-  const todayEntry = useTodayEntry();
+  const todayEntries = useTodayEntries();
   const missingDays = useMissingDays();
 
-  const handleEditToday = () => {
-    router.navigate({
-      pathname: '/(app)/(protected)/(tabs)/log',
-      params: { date: toDateString() },
+  const handleEdit = (entry: LogEntry) => {
+    router.push({
+      pathname: '/(app)/(protected)/today/edit',
+      params: { id: entry.id },
     });
   };
 
@@ -46,11 +47,20 @@ export const TodayScreen = () => {
 
       {isLoading ? (
         <Text style={styles.loading}>Loading…</Text>
-      ) : todayEntry ? (
-        <TodayEntryCard entry={todayEntry} onEdit={handleEditToday} />
+      ) : todayEntries.length > 0 ? (
+        <View style={styles.entriesList}>
+          {todayEntries.map((entry) => (
+            <TodayEntryCard
+              key={entry.id}
+              entry={entry}
+              onEdit={() => handleEdit(entry)}
+            />
+          ))}
+        </View>
       ) : (
         <TodayEmptyState />
       )}
+
       {missingDays.length > 0 && (
         <TouchableOpacity onPress={() => handleEditMissingDay(missingDays[0])}>
           <Text style={styles.missedHint}>
@@ -88,6 +98,9 @@ const styles = StyleSheet.create({
   loading: {
     ...Typography.body,
     color: Colors.light.text_secondary,
+  },
+  entriesList: {
+    gap: Spacing.md,
   },
   missedHint: {
     ...Typography.caption,

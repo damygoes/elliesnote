@@ -19,22 +19,7 @@ type LogActions = {
 export const useLogStore = create<LogState & LogActions>((set) => ({
   entries: [],
 
-  addEntry: (entry) =>
-    set((state) => {
-      const day = (iso: string) => iso.slice(0, 10);
-      const existingIndex = state.entries.findIndex(
-        (e) => day(e.date) === day(entry.date),
-      );
-
-      if (existingIndex !== -1) {
-        // overwrite existing entry for that date
-        const updated = [...state.entries];
-        updated[existingIndex] = entry;
-        return { entries: updated };
-      }
-
-      return { entries: [...state.entries, entry] };
-    }),
+  addEntry: (entry) => set((state) => ({ entries: [...state.entries, entry] })),
 
   updateEntry: (entry) =>
     set((state) => ({
@@ -55,9 +40,9 @@ export const useAddEntry = () => useLogStore((state) => state.addEntry);
 export const useUpdateEntry = () => useLogStore((state) => state.updateEntry);
 export const useDeleteEntry = () => useLogStore((state) => state.deleteEntry);
 
-export const useEntryByDate = (date: string) =>
+export const useEntriesByDate = (date: string) =>
   useLogStore((state) =>
-    state.entries.find(
+    state.entries.filter(
       (entry) => entry.date.slice(0, 10) === date.slice(0, 10),
     ),
   );
