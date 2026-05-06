@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { Circle, Path, Skia } from '@shopify/react-native-skia';
+import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Easing, useSharedValue, withTiming } from 'react-native-reanimated';
 import { CartesianChart } from 'victory-native';
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.sm,
-    marginTop: Spacing.xs,
+    marginTop: Spacing.lg,
   },
   legendItem: {
     flexDirection: 'row',

@@ -10,16 +10,32 @@ export type DataPoint = {
   energyLevel: number;
 };
 
+export type InsightType =
+  | 'summary'
+  | 'energy_trend'
+  | 'symptom'
+  | 'day_of_week'
+  | 'sleep'
+  | 'activity'
+  | 'hrv';
+
+export type InsightItem = {
+  type: InsightType;
+  title: string;
+  body: string;
+  sampleCount: number;
+};
+
 export type ExploreData = {
   stats: DataPoint[];
   days: string[];
   streak: number;
-  insight: string | null;
+  insights: InsightItem[];
 };
 
 export type Range = 7 | 14 | 30;
 
-const cacheKey = (range: Range) => `@elliesnote/explore-v2-${range}`;
+const cacheKey = (range: Range) => `@elliesnote/explore-v3-${range}`;
 
 async function readCache(range: Range): Promise<ExploreData | null> {
   try {
@@ -45,7 +61,7 @@ export const useExploreData = (range: Range) => {
     stats: [],
     days: [],
     streak: 0,
-    insight: null,
+    insights: [],
   });
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -61,7 +77,7 @@ export const useExploreData = (range: Range) => {
 
       const cached = await readCache(range);
       if (!cancelled && cached) {
-        setData(cached);
+        setData({ ...cached, insights: cached.insights ?? [] });
         setIsLoading(false);
       }
 
@@ -106,7 +122,7 @@ export const useExploreData = (range: Range) => {
           stats: statsJson?.data?.entries ?? [],
           days: statsJson?.data?.days ?? [],
           streak: Number(streakJson?.data?.streakDays ?? 0),
-          insight: insightJson?.data?.message ?? null,
+          insights: insightJson?.data?.insights ?? [],
         };
 
         setData(fresh);

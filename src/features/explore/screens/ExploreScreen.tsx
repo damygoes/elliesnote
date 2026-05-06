@@ -1,6 +1,6 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { HealthConnectCard } from '@/features/health/components/HealthConnectCard';
 import { useHealthSync } from '@/features/health/hooks/useHealthSync';
@@ -13,7 +13,7 @@ import { type Range, useExploreData } from '../hooks/useExploreData';
 
 export const ExploreScreen = () => {
   const [range, setRange] = useState<Range>(7);
-  const { stats, days, streak, insight, isLoading, hasError, refresh } =
+  const { stats, days, streak, insights, isLoading, hasError, refresh } =
     useExploreData(range);
 
   useHealthSync(days);
@@ -42,21 +42,30 @@ export const ExploreScreen = () => {
 
       <RangeSelector value={range} onChange={setRange} />
 
-      <Text style={styles.sectionLabel}>Streak</Text>
-      <StreakCard streakDays={streak} isLoading={isLoading} />
+      <View style={styles.section}>
+        <Text style={styles.sectionLabel}>Streak</Text>
+        <StreakCard streakDays={streak} isLoading={isLoading} />
+      </View>
 
-      <Text style={styles.sectionLabel}>Energy</Text>
-      <EnergyChart
-        stats={stats}
-        days={days}
-        range={range}
-        isLoading={isLoading}
-      />
+      <View style={styles.section}>
+        <Text style={styles.sectionLabel}>Energy</Text>
+        <EnergyChart
+          stats={stats}
+          days={days}
+          range={range}
+          isLoading={isLoading}
+        />
+      </View>
 
-      <InsightCard message={insight} isLoading={isLoading} />
+      <View style={styles.section}>
+        <Text style={styles.sectionLabel}>Insights</Text>
+        <InsightCard insights={insights} isLoading={isLoading} />
+      </View>
 
-      <Text style={styles.sectionLabel}>Health</Text>
-      <HealthConnectCard />
+      <View style={styles.section}>
+        <Text style={styles.sectionLabel}>Health</Text>
+        <HealthConnectCard />
+      </View>
     </ScrollView>
   );
 };
@@ -70,7 +79,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xxl,
     paddingBottom: Spacing.xxl,
-    gap: Spacing.lg,
+    gap: Spacing.xxl,
+  },
+  section: {
+    gap: Spacing.md,
   },
   title: {
     fontSize: Typography.subtitle.fontSize,
