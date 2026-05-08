@@ -79,6 +79,15 @@ export default function ProtectedLayout() {
             headerShadowVisible: false,
           }}
         />
+        <Stack.Screen
+          name="today/missing-days"
+          options={{
+            presentation: 'formSheet',
+            headerShown: false,
+            sheetAllowedDetents: isIPad ? [1] : [0.65],
+            headerShadowVisible: false,
+          }}
+        />
       </Stack>
     </RequireAuth>
   );

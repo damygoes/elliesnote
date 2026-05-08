@@ -31,13 +31,6 @@ export const TodayScreen = () => {
     });
   };
 
-  const handleEditMissingDay = (date: string) => {
-    router.navigate({
-      pathname: '/(app)/(protected)/(tabs)/log',
-      params: { date },
-    });
-  };
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
@@ -63,11 +56,12 @@ export const TodayScreen = () => {
 
       {missingDays.length > 0 && (
         <TouchableOpacity
-          onPress={() => handleEditMissingDay(missingDays[0])}
+          onPress={() => router.push('/today/missing-days')}
           style={styles.missedHintContainer}
         >
           <Text style={styles.missedHint}>
-            You can fill in previous days anytime
+            You missed {missingDays.length} day
+            {missingDays.length !== 1 ? 's' : ''} — Fill in →
           </Text>
         </TouchableOpacity>
       )}

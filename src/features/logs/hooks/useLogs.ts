@@ -28,8 +28,15 @@ export const useLogs = () => {
       try {
         const fresh = await checkInApiService.fetchAll(getTokenRef.current);
         if (!active) return;
-        useLogStore.setState({ entries: fresh });
-        logStorageService.save(fresh);
+        // Preserve locally-added entries whose date isn't in the server response
+        // yet (the fire-and-forget POST may still be in-flight).
+        const serverDates = new Set(fresh.map((e) => e.date.slice(0, 10)));
+        const pending = useLogStore
+          .getState()
+          .entries.filter((e) => !serverDates.has(e.date.slice(0, 10)));
+        const merged = [...fresh, ...pending];
+        useLogStore.setState({ entries: merged });
+        logStorageService.save(merged);
       } catch {
         // keep cached data on network failure
       } finally {
