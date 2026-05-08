@@ -1,9 +1,9 @@
+import { logger } from '@/services/logger';
 import { useAuth } from '@clerk/clerk-expo';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-
-import { useHealthPermission } from './useHealthPermission';
 import { syncHealthDays } from '../services/healthSyncService';
+import { useHealthPermission } from './useHealthPermission';
 
 export function useHealthSync(days: string[]) {
   const { getToken } = useAuth();
@@ -30,7 +30,12 @@ export function useHealthSync(days: string[]) {
       setIsSyncing(true);
 
       syncHealthDays(daysRef.current, () => getTokenRef.current())
-        .catch(() => {})
+        .catch((error: Error) => {
+          logger.warn(
+            'Failed to sync health days: ',
+            JSON.stringify({ error: error.message }),
+          );
+        })
         .finally(() => {
           syncingRef.current = false;
           setIsSyncing(false);

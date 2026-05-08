@@ -1,7 +1,15 @@
-import { useEffect, useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
+import { logger } from '@/services/logger';
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
 import { useHealthPermission } from '../hooks/useHealthPermission';
 import { fetchDailySnapshot } from '../services/healthKitService';
@@ -33,21 +41,42 @@ function Pill({ value, label }: PillProps) {
   );
 }
 
-export const HealthConnectCard = () => {
+type Props = {
+  isPremium: boolean;
+};
+
+export const HealthConnectCard = ({ isPremium }: Props) => {
   const { hasPermission } = useHealthPermission();
   const [snapshot, setSnapshot] = useState<DailyHealthSnapshot | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (hasPermission !== true || Platform.OS !== 'ios') return;
+    if (hasPermission !== true || Platform.OS !== 'ios' || !isPremium) return;
     setIsLoading(true);
     fetchDailySnapshot(getYesterdayKey())
       .then(setSnapshot)
-      .catch(() => {})
+      .catch((error: Error) => {
+        logger.warn('Failed to fetch health snapshot', error.message, error);
+      })
       .finally(() => setIsLoading(false));
-  }, [hasPermission]);
+  }, [hasPermission, isPremium]);
 
   if (Platform.OS !== 'ios') return null;
+
+  if (!isPremium) {
+    return (
+      <TouchableOpacity
+        style={styles.nudge}
+        onPress={() => router.push('/premium')}
+        activeOpacity={0.85}
+      >
+        <Text style={styles.nudgeText}>
+          🔒 Connect Apple Health for sleep, HRV and activity insights
+        </Text>
+        <Text style={styles.nudgeLink}>Upgrade →</Text>
+      </TouchableOpacity>
+    );
+  }
 
   // Not connected — passive nudge only
   if (hasPermission !== true) {

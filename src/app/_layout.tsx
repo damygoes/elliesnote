@@ -11,8 +11,11 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { initPurchases } from '@/features/subscription/services/purchasesService';
 import { useNotificationTapHandler } from '@/features/notifications/hooks/useNotificationTapHandler';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+
+initPurchases();
 
 // Show notifications when the app is foregrounded
 Notifications.setNotificationHandler({

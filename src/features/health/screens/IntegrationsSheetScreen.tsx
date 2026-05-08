@@ -1,12 +1,15 @@
+import { router } from 'expo-router';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { usePremium } from '@/features/subscription/hooks/usePremium';
 import { SheetHeader } from '@/shared/components/SheetHeader';
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
 import { useHealthPermission } from '../hooks/useHealthPermission';
 
 function AppleHealthCard() {
   const { hasPermission, request, disconnect } = useHealthPermission();
+  const { isPremium } = usePremium();
 
   const isConnected = hasPermission === true;
 
@@ -37,6 +40,13 @@ function AppleHealthCard() {
             <Text style={styles.disconnectText}>Disconnect</Text>
           </Pressable>
         </View>
+      ) : !isPremium ? (
+        <Pressable
+          style={styles.lockedButton}
+          onPress={() => router.push('/premium')}
+        >
+          <Text style={styles.lockedText}>🔒 Premium feature — Upgrade</Text>
+        </Pressable>
       ) : (
         <Pressable
           style={[
@@ -124,12 +134,23 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     alignItems: 'center',
   },
+  lockedButton: {
+    backgroundColor: Colors.light.primary_soft,
+    borderRadius: Radius.md,
+    paddingVertical: Spacing.md,
+    alignItems: 'center',
+  },
   disabledButton: {
     backgroundColor: Colors.light.primary_disabled,
   },
   connectText: {
     ...Typography.body,
-    color: Colors.light.surface,
+    color: Colors.light.on_primary,
+    fontWeight: '600',
+  },
+  lockedText: {
+    ...Typography.body,
+    color: Colors.light.primary,
     fontWeight: '600',
   },
   disconnectButton: {

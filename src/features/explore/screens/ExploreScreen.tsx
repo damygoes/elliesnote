@@ -1,9 +1,10 @@
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { HealthConnectCard } from '@/features/health/components/HealthConnectCard';
 import { useHealthSync } from '@/features/health/hooks/useHealthSync';
+import { usePremium } from '@/features/subscription/hooks/usePremium';
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
 import { EnergyChart } from '../components/EnergyChart';
 import { InsightCard } from '../components/InsightCard';
@@ -12,11 +13,21 @@ import { StreakCard } from '../components/StreakCard';
 import { type Range, useExploreData } from '../hooks/useExploreData';
 
 export const ExploreScreen = () => {
+  const { isPremium } = usePremium();
   const [range, setRange] = useState<Range>(7);
   const { stats, days, streak, insights, isLoading, hasError, refresh } =
     useExploreData(range);
 
   useHealthSync(days);
+
+  const prevIsPremiumRef = useRef(isPremium);
+  useEffect(() => {
+    if (!prevIsPremiumRef.current && isPremium) {
+      refresh();
+    }
+    if (!isPremium && range > 7) setRange(7);
+    prevIsPremiumRef.current = isPremium;
+  }, [isPremium, range, refresh]);
 
   const isMounted = useRef(false);
   useFocusEffect(
@@ -40,7 +51,7 @@ export const ExploreScreen = () => {
         </Text>
       )}
 
-      <RangeSelector value={range} onChange={setRange} />
+      <RangeSelector value={range} onChange={setRange} isPremium={isPremium} />
 
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Streak</Text>
@@ -59,12 +70,16 @@ export const ExploreScreen = () => {
 
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Insights</Text>
-        <InsightCard insights={insights} isLoading={isLoading} />
+        <InsightCard
+          insights={insights}
+          isLoading={isLoading}
+          isPremium={isPremium}
+        />
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Health</Text>
-        <HealthConnectCard />
+        <HealthConnectCard isPremium={isPremium} />
       </View>
     </ScrollView>
   );

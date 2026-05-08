@@ -62,7 +62,10 @@ export const TodayScreen = () => {
       )}
 
       {missingDays.length > 0 && (
-        <TouchableOpacity onPress={() => handleEditMissingDay(missingDays[0])}>
+        <TouchableOpacity
+          onPress={() => handleEditMissingDay(missingDays[0])}
+          style={styles.missedHintContainer}
+        >
           <Text style={styles.missedHint}>
             You can fill in previous days anytime
           </Text>
@@ -105,5 +108,13 @@ const styles = StyleSheet.create({
   missedHint: {
     ...Typography.caption,
     color: Colors.light.text_secondary,
+  },
+  missedHintContainer: {
+    padding: Spacing.lg,
+    backgroundColor: Colors.light.background_primary,
+    borderRadius: Spacing['3xl'],
+    borderWidth: 1,
+    borderColor: Colors.light.border,
+    alignItems: 'center',
   },
 });
