@@ -130,7 +130,7 @@ export const EnergyChart = ({ stats, days, range, isLoading }: Props) => {
                     key={i}
                     cx={point.x ?? 0}
                     cy={point.y ?? 0}
-                    r={7}
+                    r={4}
                     color={dotColor(chartData[i]?.y ?? 1)}
                   />
                 ))}
