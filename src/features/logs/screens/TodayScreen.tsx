@@ -1,28 +1,31 @@
 import { useUser } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { usePremium } from '@/features/subscription/hooks/usePremium';
+import { Button } from '@/shared/components/ui/Button';
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
 import { formatDate } from '@/shared/utils/date';
 import { getGreeting } from '@/shared/utils/greeting';
+import { CrashBanner } from '../components/CrashBanner';
 import { TodayEmptyState } from '../components/TodayEmptyState';
 import { TodayEntryCard } from '../components/TodayEntryCard';
+import { TodaySummaryCard } from '../components/TodaySummaryCard';
+import { useCrashDays } from '../hooks/useCrashDays';
+import { useDeleteLogEntry } from '../hooks/useDeleteLogEntry';
 import { useLogs } from '../hooks/useLogs';
-import { useMissingDays } from '../hooks/useMissingDays';
+import { useTodayCrash } from '../hooks/useTodayCrash';
 import { useTodayEntries } from '../hooks/useTodayEntries';
 import type { LogEntry } from '../types/log-entry';
 
 export const TodayScreen = () => {
   const { user } = useUser();
   const { isLoading } = useLogs();
+  useCrashDays();
   const todayEntries = useTodayEntries();
-  const missingDays = useMissingDays();
+  const { todayCrash, logCrash, undoCrash } = useTodayCrash();
+  const { isPremium } = usePremium();
+  const deleteLogEntry = useDeleteLogEntry();
 
   const handleEdit = (entry: LogEntry) => {
     router.push({
@@ -31,57 +34,94 @@ export const TodayScreen = () => {
     });
   };
 
+  const handleDelete = (entry: LogEntry) => {
+    if (!isPremium) {
+      router.push('/(app)/(protected)/premium');
+      return;
+    }
+    Alert.alert('Delete entry?', 'This entry will be permanently removed.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => deleteLogEntry(entry),
+      },
+    ]);
+  };
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <Text style={styles.date}>{formatDate(new Date())}</Text>
-        <Text style={styles.greeting}>{getGreeting(user?.firstName)}</Text>
-      </View>
+    <View style={styles.wrapper}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
+        {todayCrash && <CrashBanner onUndo={undoCrash} />}
 
-      {isLoading ? (
-        <Text style={styles.loading}>Loading…</Text>
-      ) : todayEntries.length > 0 ? (
-        <View style={styles.entriesList}>
-          {todayEntries.map((entry) => (
-            <TodayEntryCard
-              key={entry.id}
-              entry={entry}
-              onEdit={() => handleEdit(entry)}
-            />
-          ))}
+        <View style={styles.header}>
+          <Text style={styles.date}>{formatDate(new Date())}</Text>
+          <Text style={styles.greeting}>{getGreeting(user?.firstName)}</Text>
         </View>
-      ) : (
-        <TodayEmptyState />
-      )}
 
-      {missingDays.length > 0 && (
-        <TouchableOpacity
-          onPress={() => router.push('/today/missing-days')}
-          style={styles.missedHintContainer}
+        {isLoading ? (
+          <Text style={styles.loading}>Loading…</Text>
+        ) : todayEntries.length > 0 ? (
+          <>
+            <TodaySummaryCard entries={todayEntries} />
+            <View style={styles.entriesSection}>
+              <Text style={styles.sectionTitle}>
+                Today&apos;s Entries ({todayEntries.length})
+              </Text>
+              <View style={styles.entriesList}>
+                {todayEntries.map((entry) => (
+                  <TodayEntryCard
+                    key={entry.id}
+                    entry={entry}
+                    onEdit={() => handleEdit(entry)}
+                    onDelete={() => handleDelete(entry)}
+                  />
+                ))}
+              </View>
+            </View>
+          </>
+        ) : (
+          <TodayEmptyState />
+        )}
+      </ScrollView>
+
+      <View style={styles.actions}>
+        <Button
+          variant="primary"
+          onPress={() => router.navigate('/(app)/(protected)/(tabs)/log')}
         >
-          <Text style={styles.missedHint}>
-            You missed {missingDays.length} day
-            {missingDays.length !== 1 ? 's' : ''} — Fill in →
-          </Text>
-        </TouchableOpacity>
-      )}
-    </ScrollView>
+          Log Entry
+        </Button>
+
+        {!todayCrash && (
+          <Button variant="danger" onPress={logCrash}>
+            I&apos;m Crashing Today
+          </Button>
+        )}
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     flex: 1,
     backgroundColor: Colors.light.background_primary,
   },
-  header: {
-    gap: Spacing.xs,
+  container: {
+    flex: 1,
   },
   content: {
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xxl,
-    paddingBottom: Spacing.xxl,
+    paddingBottom: Spacing.md,
     gap: Spacing.xl,
+  },
+  header: {
+    gap: Spacing.xs,
   },
   greeting: {
     fontSize: 26,
@@ -96,19 +136,23 @@ const styles = StyleSheet.create({
     ...Typography.body,
     color: Colors.light.text_secondary,
   },
+  entriesSection: {
+    gap: Spacing.md,
+  },
+  sectionTitle: {
+    ...Typography.caption,
+    color: Colors.light.text_secondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+  },
   entriesList: {
     gap: Spacing.md,
   },
-  missedHint: {
-    ...Typography.caption,
-    color: Colors.light.text_secondary,
-  },
-  missedHintContainer: {
-    padding: Spacing.lg,
+  actions: {
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.xl,
+    gap: Spacing.md,
     backgroundColor: Colors.light.background_primary,
-    borderRadius: Spacing['3xl'],
-    borderWidth: 1,
-    borderColor: Colors.light.border,
-    alignItems: 'center',
   },
 });

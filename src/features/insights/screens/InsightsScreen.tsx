@@ -10,13 +10,13 @@ import { EnergyChart } from '../components/EnergyChart';
 import { InsightCard } from '../components/InsightCard';
 import { RangeSelector } from '../components/RangeSelector';
 import { StreakCard } from '../components/StreakCard';
-import { type Range, useExploreData } from '../hooks/useExploreData';
+import { type Range, useInsightsData } from '../hooks/useInsightsData';
 
-export const ExploreScreen = () => {
+export const InsightsScreen = () => {
   const { isPremium } = usePremium();
   const [range, setRange] = useState<Range>(7);
   const { stats, days, streak, insights, isLoading, hasError, refresh } =
-    useExploreData(range);
+    useInsightsData(range);
 
   useHealthSync(days);
 
@@ -43,7 +43,7 @@ export const ExploreScreen = () => {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.title}>Explore</Text>
+      <Text style={styles.title}>Insights</Text>
 
       {hasError && (
         <Text style={styles.errorBanner}>

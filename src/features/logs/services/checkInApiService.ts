@@ -1,4 +1,3 @@
-import { userContext } from '@/services/userContext';
 import { SYMPTOMS, type LogEntry, type Symptom } from '../types/log-entry';
 
 type GetToken = () => Promise<string | null>;
@@ -12,10 +11,10 @@ type ApiRow = {
   createdAt: string;
 };
 
-function mapRowToEntry(row: ApiRow): LogEntry {
+function mapRowToEntry(row: ApiRow, userId: string): LogEntry {
   return {
     id: row.id,
-    userId: userContext.getCurrentUserId(),
+    userId,
     date: row.checkInDate ? `${row.checkInDate}T00:00:00.000Z` : row.createdAt,
     energyLevel: row.energyLevel,
     symptoms: row.symptoms.filter((s): s is Symptom =>
@@ -79,7 +78,24 @@ export const checkInApiService = {
     }
   },
 
-  async fetchAll(getToken: GetToken): Promise<LogEntry[]> {
+  async delete(id: string, getToken: GetToken): Promise<void> {
+    const token = await getToken();
+    if (!token) return;
+
+    const res = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/api/check-ins/${id}`,
+      {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Delete failed: ${res.status} ${body}`);
+    }
+  },
+
+  async fetchAll(getToken: GetToken, userId: string): Promise<LogEntry[]> {
     const token = await getToken();
     if (!token) return [];
 
@@ -91,6 +107,6 @@ export const checkInApiService = {
 
     const json = await res.json();
     const rows: ApiRow[] = json?.data ?? [];
-    return rows.map(mapRowToEntry);
+    return rows.map((row) => mapRowToEntry(row, userId));
   },
 };

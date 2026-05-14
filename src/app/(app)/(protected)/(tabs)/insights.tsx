@@ -1,13 +1,13 @@
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ExploreScreen } from '@/features/explore/screens/ExploreScreen';
+import { InsightsScreen } from '@/features/insights/screens/InsightsScreen';
 import { Colors } from '@/shared/constants/theme';
 
-export default function ExploreTab() {
+export default function InsightsTab() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <ExploreScreen />
+      <InsightsScreen />
     </SafeAreaView>
   );
 }

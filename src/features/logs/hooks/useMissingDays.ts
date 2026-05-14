@@ -1,20 +1,16 @@
 import { useMemo } from 'react';
 
-import { userContext } from '@/services/userContext';
+import { usePremium } from '@/features/subscription/hooks/usePremium';
 import { detectMissingDays } from '../domain/detectMissingDays';
 import { useEntries } from '../store/useLogStore';
 
 export const useMissingDays = () => {
   const entries = useEntries();
-  const userId = userContext.getCurrentUserId();
+  const { isPremium } = usePremium();
+  const windowDays = isPremium ? 30 : 7;
 
-  const userEntries = useMemo(() => {
-    return entries.filter((e) => e.userId === userId);
-  }, [entries, userId]);
-
-  const missingDays = useMemo(() => {
-    return detectMissingDays({ entries: userEntries });
-  }, [userEntries]);
-
-  return missingDays;
+  return useMemo(
+    () => detectMissingDays({ entries, windowDays }),
+    [entries, windowDays],
+  );
 };

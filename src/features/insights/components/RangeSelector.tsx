@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
-import type { Range } from '../hooks/useExploreData';
+import type { Range } from '../hooks/useInsightsData';
 
 const RANGES: Range[] = [7, 14, 30];
 

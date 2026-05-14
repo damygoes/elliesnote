@@ -1,4 +1,4 @@
-import { useAuth } from '@clerk/clerk-expo';
+import { useAuth, useUser } from '@clerk/clerk-expo';
 import { useEffect, useRef, useState } from 'react';
 
 import { checkInApiService } from '../services/checkInApiService';
@@ -9,8 +9,11 @@ export const useLogs = () => {
   const entries = useEntries();
   const [isLoading, setIsLoading] = useState(true);
   const { getToken } = useAuth();
+  const { user } = useUser();
   const getTokenRef = useRef(getToken);
   getTokenRef.current = getToken;
+  const userIdRef = useRef(user?.id);
+  userIdRef.current = user?.id;
 
   useEffect(() => {
     let active = true;
@@ -26,7 +29,10 @@ export const useLogs = () => {
 
       // Refresh from API and update cache
       try {
-        const fresh = await checkInApiService.fetchAll(getTokenRef.current);
+        const fresh = await checkInApiService.fetchAll(
+          getTokenRef.current,
+          userIdRef.current ?? '',
+        );
         if (!active) return;
         // Preserve locally-added entries whose date isn't in the server response
         // yet (the fire-and-forget POST may still be in-flight).

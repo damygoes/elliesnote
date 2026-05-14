@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 
 import type { LogEntry } from '../types/log-entry';
 
@@ -41,8 +42,10 @@ export const useUpdateEntry = () => useLogStore((state) => state.updateEntry);
 export const useDeleteEntry = () => useLogStore((state) => state.deleteEntry);
 
 export const useEntriesByDate = (date: string) =>
-  useLogStore((state) =>
-    state.entries.filter(
-      (entry) => entry.date.slice(0, 10) === date.slice(0, 10),
+  useLogStore(
+    useShallow((state) =>
+      state.entries.filter(
+        (entry) => entry.date.slice(0, 10) === date.slice(0, 10),
+      ),
     ),
   );

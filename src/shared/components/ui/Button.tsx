@@ -8,7 +8,7 @@ import {
   type TouchableOpacityProps,
 } from 'react-native';
 
-type Variant = 'primary' | 'secondary' | 'ghost';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 interface ButtonProps extends TouchableOpacityProps {
   variant?: Variant;
@@ -78,6 +78,13 @@ const styles = StyleSheet.create({
   ghost: {
     backgroundColor: 'transparent',
     borderColor: 'transparent',
+  },
+  danger: {
+    backgroundColor: Colors.light.error,
+    borderColor: Colors.light.error,
+  },
+  dangerLabel: {
+    color: Colors.light.white,
   },
   disabled: {
     opacity: 0.5,

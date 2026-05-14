@@ -1,5 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@clerk/clerk-expo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getTzOffsetMinutes } from '@/shared/utils/tzOffset';
@@ -26,7 +26,7 @@ export type InsightItem = {
   sampleCount: number;
 };
 
-export type ExploreData = {
+export type InsightsData = {
   stats: DataPoint[];
   days: string[];
   streak: number;
@@ -35,29 +35,29 @@ export type ExploreData = {
 
 export type Range = 7 | 14 | 30;
 
-const cacheKey = (range: Range) => `@elliesnote/explore-v3-${range}`;
+const cacheKey = (range: Range) => `@elliesnote/insights-v3-${range}`;
 
-async function readCache(range: Range): Promise<ExploreData | null> {
+async function readCache(range: Range): Promise<InsightsData | null> {
   try {
     const raw = await AsyncStorage.getItem(cacheKey(range));
-    return raw ? (JSON.parse(raw) as ExploreData) : null;
+    return raw ? (JSON.parse(raw) as InsightsData) : null;
   } catch {
     return null;
   }
 }
 
-async function writeCache(range: Range, data: ExploreData): Promise<void> {
+async function writeCache(range: Range, data: InsightsData): Promise<void> {
   try {
     await AsyncStorage.setItem(cacheKey(range), JSON.stringify(data));
   } catch {}
 }
 
-export const useExploreData = (range: Range) => {
+export const useInsightsData = (range: Range) => {
   const { getToken } = useAuth();
   const getTokenRef = useRef(getToken);
   getTokenRef.current = getToken;
 
-  const [data, setData] = useState<ExploreData>({
+  const [data, setData] = useState<InsightsData>({
     stats: [],
     days: [],
     streak: 0,
@@ -118,7 +118,7 @@ export const useExploreData = (range: Range) => {
 
         if (cancelled) return;
 
-        const fresh: ExploreData = {
+        const fresh: InsightsData = {
           stats: statsJson?.data?.entries ?? [],
           days: statsJson?.data?.days ?? [],
           streak: Number(streakJson?.data?.streakDays ?? 0),

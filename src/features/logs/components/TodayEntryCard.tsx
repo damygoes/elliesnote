@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { ViewStyle } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
 import { ENERGY_COLORS, type EnergyLevel } from '../constants/energy';
@@ -9,6 +9,7 @@ import { SYMPTOM_LABELS } from './SymptomToggle';
 type Props = {
   entry: LogEntry;
   onEdit?: () => void;
+  onDelete?: () => void;
 };
 
 const dotStyles = StyleSheet.create({
@@ -27,7 +28,7 @@ const ENERGY_DOT: Record<EnergyLevel, ViewStyle> = {
   5: dotStyles.level5,
 };
 
-export const TodayEntryCard = ({ entry, onEdit }: Props) => (
+export const TodayEntryCard = ({ entry, onEdit, onDelete }: Props) => (
   <View style={styles.card}>
     <View style={styles.row}>
       <Text style={styles.metaLabel}>Energy</Text>
@@ -61,20 +62,34 @@ export const TodayEntryCard = ({ entry, onEdit }: Props) => (
       </>
     ) : null}
 
-    {onEdit ? (
+    {onEdit || onDelete ? (
       <>
         {(entry.symptoms.length > 0 || !!entry.notes) && (
           <View style={styles.divider} />
         )}
-        <TouchableOpacity
-          onPress={onEdit}
-          activeOpacity={0.6}
-          style={styles.editRow}
-          accessibilityLabel="Edit today's entry"
-          accessibilityRole="button"
-        >
-          <Text style={styles.editText}>Edit</Text>
-        </TouchableOpacity>
+        <View style={styles.actionRow}>
+          {onEdit && (
+            <TouchableOpacity
+              onPress={onEdit}
+              activeOpacity={0.6}
+              style={styles.editPush}
+              accessibilityLabel="Edit this entry"
+              accessibilityRole="button"
+            >
+              <Text style={styles.editText}>Edit</Text>
+            </TouchableOpacity>
+          )}
+          {onDelete && (
+            <TouchableOpacity
+              onPress={onDelete}
+              activeOpacity={0.6}
+              accessibilityLabel="Delete this entry"
+              accessibilityRole="button"
+            >
+              <Text style={styles.deleteText}>Delete</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </>
     ) : null}
   </View>
@@ -135,11 +150,21 @@ const styles = StyleSheet.create({
     ...Typography.body,
     color: Colors.light.text_primary,
   },
-  editRow: {
-    alignItems: 'flex-end',
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    marginTop: Spacing.sm,
+  },
+  editPush: {
+    marginLeft: 'auto',
   },
   editText: {
     ...Typography.caption,
     color: Colors.light.primary,
+  },
+  deleteText: {
+    ...Typography.caption,
+    color: Colors.light.error,
   },
 });

@@ -10,7 +10,7 @@ import {
   type EnergyLevel,
 } from '@/features/logs/constants/energy';
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
-import type { DataPoint, Range } from '../hooks/useExploreData';
+import type { DataPoint, Range } from '../hooks/useInsightsData';
 
 type Props = {
   stats: DataPoint[];

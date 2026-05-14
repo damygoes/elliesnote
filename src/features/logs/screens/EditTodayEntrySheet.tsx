@@ -4,7 +4,6 @@ import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SheetHeader } from '@/shared/components/SheetHeader';
-import { userContext } from '@/services/userContext';
 import { Colors } from '@/shared/constants/theme';
 import { LogEntryForm } from '../components/LogEntryForm';
 import { useLogStore } from '../store/useLogStore';
@@ -12,14 +11,13 @@ import { useLogStore } from '../store/useLogStore';
 export const EditTodayEntrySheet = () => {
   const { id, date } = useLocalSearchParams<{ id?: string; date?: string }>();
   const { user } = useUser();
-  const userId = userContext.getCurrentUserId();
+  const userId = user?.id;
 
   const entry = useLogStore((state) =>
     id ? state.entries.find((e) => e.id === id) : undefined,
   );
 
-  // Editing mode requires a valid entry owned by this user.
-  if (id && (!entry || entry.userId !== userId)) return null;
+  if (id && !entry) return null;
 
   const isBackfill = !id && !!date;
   const title = isBackfill ? 'Fill in missed day' : 'Edit Entry';

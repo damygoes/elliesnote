@@ -18,6 +18,7 @@ type Props = {
   selectedDate?: string;
   firstName?: string;
   onSave?: () => void;
+  noScroll?: boolean;
 };
 
 export const LogEntryForm = ({
@@ -26,6 +27,7 @@ export const LogEntryForm = ({
   selectedDate,
   firstName,
   onSave,
+  noScroll = false,
 }: Props) => {
   const { createEntry, isError: createError, isSaved } = useCreateLogEntry();
   const { updateEntry, isError: updateError } = useUpdateLogEntry();
@@ -90,13 +92,8 @@ export const LogEntryForm = ({
     router.back();
   };
 
-  return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      keyboardShouldPersistTaps="handled"
-      automaticallyAdjustKeyboardInsets
-    >
+  const fields = (
+    <>
       <View style={styles.section}>
         <Text style={styles.energyQuestion}>
           {isToday
@@ -157,6 +154,21 @@ export const LogEntryForm = ({
       >
         Save
       </Button>
+    </>
+  );
+
+  if (noScroll) {
+    return <View style={styles.noScrollContent}>{fields}</View>;
+  }
+
+  return (
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets
+    >
+      {fields}
     </ScrollView>
   );
 };
@@ -169,6 +181,12 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xxl,
+    paddingBottom: 48,
+    gap: Spacing.xxl,
+  },
+  noScrollContent: {
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.xl,
     paddingBottom: 48,
     gap: Spacing.xxl,
   },

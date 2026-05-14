@@ -48,23 +48,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="insights"
         options={{
-          title: 'Explore',
+          title: 'Insights',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="sparkles" color={color} />
+            <IconSymbol
+              size={28}
+              name="chart.line.uptrend.xyaxis"
+              color={color}
+            />
           ),
         }}
       />
-      <Tabs.Screen
-        name="history"
-        options={{
-          title: 'History',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="list.bullet" color={color} />
-          ),
-        }}
-      />
+      <Tabs.Screen name="history" options={{ href: null }} />
       <Tabs.Screen
         name="settings"
         options={{

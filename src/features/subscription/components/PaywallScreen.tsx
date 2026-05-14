@@ -25,6 +25,8 @@ const FEATURES = [
   'Personalised energy insights',
   '14-day and 30-day trend charts',
   'Apple Health sync (sleep, HRV, steps)',
+  'Browse your full calendar history, month by month',
+  '30-day missed-day tracking on your calendar',
 ];
 
 function hasFreeTrialOffer(pkg: PurchasesPackage): boolean {
