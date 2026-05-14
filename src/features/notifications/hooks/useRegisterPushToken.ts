@@ -11,30 +11,50 @@ export function useRegisterPushToken() {
     if (!isSignedIn) return;
 
     const register = async () => {
+      const granted = await notificationService.requestPermissions();
+      logger.info('PushToken', `Permission granted: ${granted}`);
+      if (!granted) return;
+
       const token = await notificationService.getExpoPushToken();
-      if (!token) return;
+      if (!token) {
+        logger.warn(
+          'PushToken',
+          'getExpoPushToken returned null — token not registered',
+        );
+        return;
+      }
+      logger.info('PushToken', `Token obtained: ${token.slice(0, 40)}...`);
 
       const authToken = await getToken();
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      logger.info('PushToken', `Registering with timezone: ${timezone}`);
 
-      await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/me/push-token`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/me/push-token`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            expoPushToken: token,
+            platform: Platform.OS,
+            timezone,
+          }),
         },
-        body: JSON.stringify({
-          expoPushToken: token,
-          platform: Platform.OS,
-          timezone,
-        }),
-      }).catch((error: Error) => {
+      ).catch((error: Error) => {
         // Non-fatal: registration will be retried on next app launch
         logger.warn(
-          'Failed to register push token',
-          JSON.stringify({ error: error.message }),
+          'PushToken',
+          `Failed to register push token: ${error.message}`,
         );
+        return null;
       });
+
+      if (res) {
+        logger.info('PushToken', `API response status: ${res.status}`);
+      }
     };
 
     register();
