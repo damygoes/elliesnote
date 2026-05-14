@@ -1,15 +1,10 @@
 import { logger } from '@/services/logger';
-import { Colors, Fonts } from '@/shared/constants/theme';
+import { Button } from '@/shared/components/ui/Button';
+import { Colors, Fonts, Spacing } from '@/shared/constants/theme';
 import { isIPad } from '@/shared/utils/isIPad';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import {
-  Linking,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { AUTH_LINKS } from '../constants/links';
 import { AUTH_MESSAGES } from '../constants/messages';
@@ -24,80 +19,81 @@ export function AuthLandingContent() {
 
   const handleGoogleAuth = async () => {
     const result = await googleOAuth.startOAuth();
-    if (!result.success) {
-      logger.error('Google OAuth failed', result.error);
-    }
+    if (!result.success) logger.error('Google OAuth failed', result.error);
   };
 
   const handleAppleAuth = async () => {
     const result = await appleOAuth.startOAuth();
-    if (!result.success) {
-      logger.error('Apple OAuth failed', result.error);
-    }
+    if (!result.success) logger.error('Apple OAuth failed', result.error);
   };
 
-  const openPrivacy = () => {
-    Linking.openURL(AUTH_LINKS.PRIVACY_URL);
-  };
-
-  const openTerms = () => {
-    Linking.openURL(AUTH_LINKS.TERMS_URL);
-  };
+  const openPrivacy = () => Linking.openURL(AUTH_LINKS.PRIVACY_URL);
+  const openTerms = () => Linking.openURL(AUTH_LINKS.TERMS_URL);
 
   return (
     <View style={styles.container}>
-      <View style={styles.logoContainer}>
+      {/* Hero — logo + tagline, vertically centered in the upper portion */}
+      <View style={styles.hero}>
         <Image
           source={require('@/assets/icons/icon.png')}
           style={styles.logo}
           contentFit="contain"
         />
+        <AppTagline />
       </View>
-      <AppTagline />
-      <View style={styles.buttonContainer}>
-        <Animated.View entering={FadeInDown.delay(120)}>
-          <OAuthButton
-            provider="google"
-            onPress={handleGoogleAuth}
-            loading={googleOAuth.isLoading}
-          />
+
+      {/* Actions — stacked below the hero */}
+      <View style={styles.actions}>
+        <View style={styles.oauthGroup}>
+          <Animated.View entering={FadeInDown.delay(100)}>
+            <OAuthButton
+              provider="google"
+              onPress={handleGoogleAuth}
+              loading={googleOAuth.isLoading}
+            />
+          </Animated.View>
+          <Animated.View entering={FadeInDown.delay(200)}>
+            <OAuthButton
+              provider="apple"
+              onPress={handleAppleAuth}
+              loading={appleOAuth.isLoading}
+            />
+          </Animated.View>
+        </View>
+
+        <Animated.View style={styles.divider} entering={FadeInDown.delay(280)}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>or</Text>
+          <View style={styles.dividerLine} />
         </Animated.View>
 
-        <Animated.View entering={FadeInDown.delay(220)}>
-          <OAuthButton
-            provider="apple"
-            onPress={handleAppleAuth}
-            loading={appleOAuth.isLoading}
-          />
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.delay(320)}>
-          <TouchableOpacity
-            style={styles.emailButton}
+        <Animated.View entering={FadeInDown.delay(340)}>
+          <Button
+            variant="secondary"
             onPress={() => router.push(AUTH_LINKS.SIGN_UP)}
           >
-            <Text style={styles.emailButtonText}>
-              {AUTH_MESSAGES.LANDING.emailButton}
+            {AUTH_MESSAGES.LANDING.emailButton}
+          </Button>
+        </Animated.View>
+
+        <Animated.View
+          style={styles.privacyContainer}
+          entering={FadeInDown.delay(440)}
+        >
+          <Text style={styles.privacyText}>
+            By continuing, you agree to our{' '}
+            <Text style={styles.privacyLink} onPress={openTerms}>
+              Terms
+            </Text>{' '}
+            and acknowledge our{' '}
+            <Text style={styles.privacyLink} onPress={openPrivacy}>
+              Privacy Statement
             </Text>
-          </TouchableOpacity>
+            .
+          </Text>
         </Animated.View>
       </View>
-      <Animated.View
-        style={styles.privacyContainer}
-        entering={FadeInDown.delay(420)}
-      >
-        <Text style={styles.privacyText}>
-          By continuing, you agree to our{' '}
-          <Text style={styles.privacyLink} onPress={openTerms}>
-            Terms
-          </Text>{' '}
-          and acknowledge our{' '}
-          <Text style={styles.privacyLink} onPress={openPrivacy}>
-            Privacy Statement
-          </Text>
-          .
-        </Text>
-      </Animated.View>
+
       <Animated.Text entering={FadeInDown.delay(520)} style={styles.brandLine}>
         {AUTH_MESSAGES.LANDING.brand}
       </Animated.Text>
@@ -107,53 +103,50 @@ export function AuthLandingContent() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.6,
+    flex: 1,
+    gap: Spacing.lg,
     flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingHorizontal: 30,
-    paddingVertical: 20,
-    gap: 10,
-    position: 'relative',
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing['3xl'],
+    paddingBottom: Spacing.xxl,
     backgroundColor: Colors.light.background_primary,
   },
-  logoContainer: {
-    display: 'flex',
-    flexDirection: 'row',
+  hero: {
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
-    top: -140,
-    width: '100%',
+    justifyContent: 'flex-end',
+    paddingBottom: Spacing.lg,
   },
   logo: {
-    width: '100%',
-    height: 180,
+    width: isIPad ? 180 : 240,
+    height: isIPad ? 180 : 240,
+    marginBottom: -24,
   },
-  buttonContainer: {
-    gap: 14,
-    width: isIPad ? '50%' : '100%',
+  actions: {
+    width: isIPad ? '60%' : '100%',
+    alignSelf: 'center',
+    gap: Spacing.lg,
   },
-  emailButton: {
-    backgroundColor: Colors.light.surface,
+  oauthGroup: {
+    gap: Spacing.md,
+  },
+  divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: 12,
-    gap: 8,
-    borderWidth: 1,
-    borderColor: Colors.light.border,
-    marginTop: 4,
+    gap: Spacing.md,
   },
-  emailButtonText: {
-    color: Colors.light.text_primary,
-    fontSize: 17,
-    fontWeight: '600',
+  dividerLine: {
+    flex: 1,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: Colors.light.border,
+  },
+  dividerText: {
+    fontSize: 13,
+    color: Colors.light.text_muted,
+    fontFamily: Fonts.sans,
   },
   privacyContainer: {
-    marginTop: 8,
-    paddingHorizontal: 18,
+    paddingHorizontal: Spacing.sm,
   },
   privacyText: {
     fontSize: 12,
@@ -166,9 +159,10 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   brandLine: {
-    marginTop: 4,
+    textAlign: 'center',
+    marginTop: Spacing.sm,
     fontSize: 12,
     color: Colors.light.text_muted,
-    fontFamily: Fonts?.sans,
+    fontFamily: Fonts.sans,
   },
 });

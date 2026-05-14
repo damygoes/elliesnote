@@ -10,21 +10,27 @@ import { LogEntryForm } from '../components/LogEntryForm';
 import { useLogStore } from '../store/useLogStore';
 
 export const EditTodayEntrySheet = () => {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, date } = useLocalSearchParams<{ id?: string; date?: string }>();
   const { user } = useUser();
   const userId = userContext.getCurrentUserId();
 
-  const entry = useLogStore((state) => state.entries.find((e) => e.id === id));
+  const entry = useLogStore((state) =>
+    id ? state.entries.find((e) => e.id === id) : undefined,
+  );
 
-  if (!entry || entry.userId !== userId) return null;
+  // Editing mode requires a valid entry owned by this user.
+  if (id && (!entry || entry.userId !== userId)) return null;
+
+  const isBackfill = !id && !!date;
+  const title = isBackfill ? 'Fill in missed day' : 'Edit Entry';
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <SheetHeader title="Edit Entry" />
+      <SheetHeader title={title} />
       <LogEntryForm
         existingEntry={entry}
         userId={userId}
-        selectedDate={entry.date.slice(0, 10)}
+        selectedDate={isBackfill ? date : entry?.date.slice(0, 10)}
         firstName={user?.firstName ?? undefined}
       />
     </SafeAreaView>

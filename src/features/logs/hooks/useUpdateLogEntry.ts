@@ -1,9 +1,10 @@
 import { useAuth } from '@clerk/clerk-expo';
 import { useState } from 'react';
 
+import { logger } from '@/services/logger';
 import { checkInApiService } from '../services/checkInApiService';
 import { logStorageService } from '../services/logStorageService';
-import { useUpdateEntry, useLogStore } from '../store/useLogStore';
+import { useLogStore, useUpdateEntry } from '../store/useLogStore';
 import type { LogEntry } from '../types/log-entry';
 
 export const useUpdateLogEntry = () => {
@@ -18,7 +19,12 @@ export const useUpdateLogEntry = () => {
     const saved = await logStorageService.save(nextEntries);
     if (!saved) setIsError(true);
 
-    checkInApiService.update(entry, getToken).catch(() => {});
+    checkInApiService.update(entry, getToken).catch((error: Error) => {
+      logger.warn(
+        'Failed to sync updated log entry: ',
+        JSON.stringify({ error: error.message }),
+      );
+    });
   };
 
   return { updateEntry, isError };

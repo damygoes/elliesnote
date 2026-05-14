@@ -31,13 +31,6 @@ export const TodayScreen = () => {
     });
   };
 
-  const handleEditMissingDay = (date: string) => {
-    router.navigate({
-      pathname: '/(app)/(protected)/(tabs)/log',
-      params: { date },
-    });
-  };
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
@@ -62,9 +55,13 @@ export const TodayScreen = () => {
       )}
 
       {missingDays.length > 0 && (
-        <TouchableOpacity onPress={() => handleEditMissingDay(missingDays[0])}>
+        <TouchableOpacity
+          onPress={() => router.push('/today/missing-days')}
+          style={styles.missedHintContainer}
+        >
           <Text style={styles.missedHint}>
-            You can fill in previous days anytime
+            You missed {missingDays.length} day
+            {missingDays.length !== 1 ? 's' : ''} — Fill in →
           </Text>
         </TouchableOpacity>
       )}
@@ -105,5 +102,13 @@ const styles = StyleSheet.create({
   missedHint: {
     ...Typography.caption,
     color: Colors.light.text_secondary,
+  },
+  missedHintContainer: {
+    padding: Spacing.lg,
+    backgroundColor: Colors.light.background_primary,
+    borderRadius: Spacing['3xl'],
+    borderWidth: 1,
+    borderColor: Colors.light.border,
+    alignItems: 'center',
   },
 });

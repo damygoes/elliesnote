@@ -1,6 +1,6 @@
+import { logger } from '@/services/logger';
 import { useAuth } from '@clerk/clerk-expo';
 import { useRef, useState } from 'react';
-
 import { checkInApiService } from '../services/checkInApiService';
 import { logStorageService } from '../services/logStorageService';
 import { useAddEntry, useLogStore } from '../store/useLogStore';
@@ -29,7 +29,12 @@ export const useCreateLogEntry = () => {
     if (resetTimer.current) clearTimeout(resetTimer.current);
     resetTimer.current = setTimeout(() => setIsSaved(false), SAVED_RESET_MS);
 
-    checkInApiService.create(entry, getToken).catch(() => {});
+    checkInApiService.create(entry, getToken).catch((error: Error) => {
+      logger.warn(
+        'Failed to sync log entry: ',
+        JSON.stringify({ error: error.message }),
+      );
+    });
   };
 
   return { createEntry, isError, isSaved };

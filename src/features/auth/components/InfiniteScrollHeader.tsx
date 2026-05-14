@@ -17,7 +17,7 @@ export function InfiniteScrollHeader() {
       </View>
 
       <LinearGradient
-        colors={['transparent', Colors.light.background_primary]}
+        colors={['transparent', 'transparent']}
         style={styles.gradientOverlay}
       />
     </View>

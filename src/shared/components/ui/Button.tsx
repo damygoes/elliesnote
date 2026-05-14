@@ -1,3 +1,5 @@
+import { Colors, Radius, Typography } from '@/shared/constants/theme';
+import type { ReactNode } from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -5,14 +7,13 @@ import {
   TouchableOpacity,
   type TouchableOpacityProps,
 } from 'react-native';
-import { Colors, Radius, Typography } from '@/shared/constants/theme';
 
 type Variant = 'primary' | 'secondary' | 'ghost';
 
 interface ButtonProps extends TouchableOpacityProps {
   variant?: Variant;
   loading?: boolean;
-  children: string;
+  children: ReactNode;
 }
 
 export function Button({
@@ -45,10 +46,12 @@ export function Button({
               : Colors.light.primary
           }
         />
-      ) : (
+      ) : typeof children === 'string' ? (
         <Text style={[styles.label, styles[`${variant}Label`]]}>
           {children}
         </Text>
+      ) : (
+        children
       )}
     </TouchableOpacity>
   );
@@ -59,7 +62,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 16,
-    borderRadius: Radius.md,
+    borderRadius: Radius.full,
     borderWidth: 1,
     borderColor: 'transparent',
     minHeight: 54,

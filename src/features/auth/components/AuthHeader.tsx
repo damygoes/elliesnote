@@ -23,13 +23,13 @@ const styles = StyleSheet.create({
     fontSize: 28,
     lineHeight: 32,
     color: Colors.light.text_primary,
-    fontFamily: Fonts?.sans,
+    fontFamily: Fonts.sansBold,
   },
   subtitle: {
     fontSize: 14,
     lineHeight: 20,
     color: Colors.light.text_muted,
-    fontFamily: Fonts?.sans,
+    fontFamily: Fonts.sans,
     maxWidth: 340,
   },
 });

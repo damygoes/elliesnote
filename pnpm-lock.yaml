@@ -11,6 +11,9 @@ importers:
       '@clerk/clerk-expo':
         specifier: 2.19.31
         version: 2.19.31(@solana/web3.js@1.98.4(bufferutil@4.1.0)(typescript@5.9.2)(utf-8-validate@6.0.6))(@types/react@19.1.0)(bs58@6.0.0)(bufferutil@4.1.0)(expo-apple-authentication@55.0.13(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6)))(expo-auth-session@7.0.11(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0))(expo-crypto@15.0.9(expo@54.0.33))(expo-secure-store@55.0.13(expo@54.0.33))(expo-web-browser@15.0.10(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6)))(react-dom@19.1.0(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0)(typescript@5.9.2)(use-sync-external-store@1.6.0(react@19.1.0))(utf-8-validate@6.0.6)(zod@4.3.6)
+      '@expo-google-fonts/nunito':
+        specifier: ^0.4.2
+        version: 0.4.2
       '@expo/vector-icons':
         specifier: 15.0.3
         version: 15.0.3(expo-font@14.0.11(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0)
@@ -107,6 +110,9 @@ importers:
       react-native-health:
         specifier: ^1.19.0
         version: 1.19.0(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))
+      react-native-purchases:
+        specifier: ^10.1.0
+        version: 10.1.0(react-native-web@0.21.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0)
       react-native-reanimated:
         specifier: 4.1.1
         version: 4.1.1(@babel/core@7.29.0)(react-native-worklets@0.5.1(@babel/core@7.29.0)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0)
@@ -1098,6 +1104,9 @@ packages:
     resolution: {integrity: sha512-ZAoA40rNMPwSm+AeHpCq8STiNAwzWLJuP8Xv4CHIc9wv/PSuExjMrmjfYNj682vW0OOiZ1HKxzvjQr9XZIisQA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@expo-google-fonts/nunito@0.4.2':
+    resolution: {integrity: sha512-1KCWphw/I2ugqfs9iRHUCkPTnomNgGPtF4AvqVquoEKxr0EL+mcLNLgeixsslbaSFevRR6/KJAE3sc8g0VaY0Q==}
+
   '@expo/cli@54.0.23':
     resolution: {integrity: sha512-km0h72SFfQCmVycH/JtPFTVy69w6Lx1cHNDmfLfQqgKFYeeHTjx7LVDP4POHCtNxFP2UeRazrygJhlh4zz498g==}
     hasBin: true
@@ -1737,6 +1746,15 @@ packages:
 
   '@react-navigation/routers@7.5.3':
     resolution: {integrity: sha512-1tJHg4KKRJuQ1/EvJxatrMef3NZXEPzwUIUZ3n1yJ2t7Q97siwRtbynRpQG9/69ebbtiZ8W3ScOZF/OmhvM4Rg==}
+
+  '@revenuecat/purchases-js-hybrid-mappings@18.4.0':
+    resolution: {integrity: sha512-E1Zf2ysAaMW6/ZvZPFvHjyXRE/GdqFWhcOfB6VKdA80mzAlEVS3jzV8DULUWv0QozCq8GnuLMOJZ/4+komt0+w==}
+
+  '@revenuecat/purchases-js@1.38.0':
+    resolution: {integrity: sha512-msSN9lPwILbHuZQQKwfQ8xfjrci7MyZINQNnUUnFBiZvYsWxd+2Cfc4poNt98ymdD5k5nYRiGuwhTs5PgNEQcw==}
+
+  '@revenuecat/purchases-typescript-internal@18.4.0':
+    resolution: {integrity: sha512-WpFxi/1xaCeJ4iOo1r/1LY1747fEAECL7jSBo1k4SGuXM/eUGDcLAiMjOQt6TPjN2kXKRsN97u4VzOSMMM68WA==}
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -4891,6 +4909,16 @@ packages:
       react: '*'
       react-native: '*'
 
+  react-native-purchases@10.1.0:
+    resolution: {integrity: sha512-Y3SOfcydX7lPPNHGU0bxV1xV34VBKEEEZsA5cCv1lae61Iv5Cr7+b7TVooDwSULiERCSBcgW1c9WhwrLNzuwQA==}
+    peerDependencies:
+      react: '>= 16.6.3'
+      react-native: '>= 0.73.0'
+      react-native-web: '*'
+    peerDependenciesMeta:
+      react-native-web:
+        optional: true
+
   react-native-reanimated@4.1.1:
     resolution: {integrity: sha512-QWe8EJJFOQW92b/sl551u3uPeLT5TUx2eAXkga8Kcj2w+Qs/Yh6fsz5sN8iyNO6zcoSNFqYQLICD6dvBIFGzbg==}
     peerDependencies:
@@ -6959,6 +6987,8 @@ snapshots:
       '@eslint/core': 0.13.0
       levn: 0.4.1
 
+  '@expo-google-fonts/nunito@0.4.2': {}
+
   '@expo/cli@54.0.23(bufferutil@4.1.0)(expo-router@6.0.23)(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(typescript@5.9.2)(utf-8-validate@6.0.6)':
     dependencies:
       '@0no-co/graphql.web': 1.2.0
@@ -7880,6 +7910,14 @@ snapshots:
   '@react-navigation/routers@7.5.3':
     dependencies:
       nanoid: 3.3.12
+
+  '@revenuecat/purchases-js-hybrid-mappings@18.4.0':
+    dependencies:
+      '@revenuecat/purchases-js': 1.38.0
+
+  '@revenuecat/purchases-js@1.38.0': {}
+
+  '@revenuecat/purchases-typescript-internal@18.4.0': {}
 
   '@rtsao/scc@1.1.0': {}
 
@@ -11540,6 +11578,15 @@ snapshots:
     dependencies:
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6)
+
+  react-native-purchases@10.1.0(react-native-web@0.21.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0):
+    dependencies:
+      '@revenuecat/purchases-js-hybrid-mappings': 18.4.0
+      '@revenuecat/purchases-typescript-internal': 18.4.0
+      react: 19.1.0
+      react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6)
+    optionalDependencies:
+      react-native-web: 0.21.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
   react-native-reanimated@4.1.1(@babel/core@7.29.0)(react-native-worklets@0.5.1(@babel/core@7.29.0)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.0)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0):
     dependencies:

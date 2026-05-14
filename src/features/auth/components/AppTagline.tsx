@@ -1,4 +1,4 @@
-import { Colors, Fonts } from '@/shared/constants/theme';
+import { Colors, Fonts, Typography } from '@/shared/constants/theme';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { AUTH_MESSAGES } from '../constants/messages';
@@ -20,23 +20,24 @@ export function AppTagline() {
 const styles = StyleSheet.create({
   taglineContainer: {
     alignItems: 'center',
-    paddingHorizontal: 30,
-    marginBottom: 32,
+    paddingHorizontal: 20,
+    gap: 8,
   },
   tagline: {
-    fontSize: 30,
-    fontFamily: Fonts?.sans,
-    textAlign: 'center',
-    marginBottom: 4,
-    lineHeight: 34,
+    fontSize: Typography.heading.fontSize,
+    fontWeight: Typography.heading.fontWeight,
     color: Colors.light.text_primary,
+    fontFamily: Fonts.sansBold,
+    textAlign: 'center',
+    lineHeight: 34,
   },
   subtagline: {
-    fontSize: 14,
-    fontFamily: Fonts?.sans,
+    fontSize: Typography.caption.fontSize,
+    fontWeight: Typography.caption.fontWeight,
+    fontFamily: Fonts.sans,
     textAlign: 'center',
     lineHeight: 20,
     color: Colors.light.text_muted,
-    maxWidth: 320,
+    maxWidth: 250,
   },
 });

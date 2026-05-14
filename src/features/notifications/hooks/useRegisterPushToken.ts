@@ -1,6 +1,7 @@
+import { logger } from '@/services/logger';
 import { useAuth } from '@clerk/clerk-expo';
-import { Platform } from 'react-native';
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 import { notificationService } from '../services/notificationService';
 
 export function useRegisterPushToken() {
@@ -27,8 +28,12 @@ export function useRegisterPushToken() {
           platform: Platform.OS,
           timezone,
         }),
-      }).catch(() => {
+      }).catch((error: Error) => {
         // Non-fatal: registration will be retried on next app launch
+        logger.warn(
+          'Failed to register push token',
+          JSON.stringify({ error: error.message }),
+        );
       });
     };
 
