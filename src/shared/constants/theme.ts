@@ -60,6 +60,10 @@ export const Colors = {
     icon: palette.warm_500,
     tabIconDefault: palette.warm_500,
     tabIconSelected: palette.sage_primary,
+
+    // Defaults
+    white: palette.white,
+    black: palette.black,
   },
 
   dark: {
@@ -89,6 +93,10 @@ export const Colors = {
     icon: '#9E948A',
     tabIconDefault: '#9E948A',
     tabIconSelected: '#7FAF87',
+
+    // Defaults
+    white: palette.white,
+    black: palette.black,
   },
 };
 

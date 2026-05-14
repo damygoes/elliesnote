@@ -130,13 +130,13 @@ const styles = StyleSheet.create({
   },
   connectButton: {
     backgroundColor: Colors.light.primary,
-    borderRadius: Radius.md,
+    borderRadius: Radius.full,
     paddingVertical: Spacing.md,
     alignItems: 'center',
   },
   lockedButton: {
     backgroundColor: Colors.light.primary_soft,
-    borderRadius: Radius.md,
+    borderRadius: Radius.full,
     paddingVertical: Spacing.md,
     alignItems: 'center',
   },
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   disconnectButton: {
     borderWidth: 1,
     borderColor: Colors.light.border,
-    borderRadius: Radius.md,
+    borderRadius: Radius.full,
     paddingVertical: Spacing.md,
     alignItems: 'center',
   },

@@ -7,7 +7,6 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -187,13 +186,14 @@ export function OnboardingScreen() {
             >
               Enable Reminders
             </Button>
-            <TouchableOpacity
+            <Button
+              variant="ghost"
               onPress={handleSkipNotifications}
               disabled={isLoading}
               style={styles.skipButton}
             >
               <Text style={styles.skipText}>Skip for now</Text>
-            </TouchableOpacity>
+            </Button>
           </>
         ) : (
           <Button variant="primary" onPress={goNext}>

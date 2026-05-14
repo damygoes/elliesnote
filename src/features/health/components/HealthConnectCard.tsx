@@ -128,24 +128,28 @@ export const HealthConnectCard = ({ isPremium }: Props) => {
 
 const styles = StyleSheet.create({
   nudge: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     backgroundColor: Colors.light.primary_soft,
     borderRadius: Radius.lg,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.xl,
+    gap: Spacing.xl,
   },
   nudgeText: {
-    ...Typography.small,
+    ...Typography.body,
     color: Colors.light.primary,
     flex: 1,
   },
   nudgeLink: {
-    ...Typography.small,
-    fontWeight: '600',
-    color: Colors.light.primary,
+    ...Typography.body,
+    color: Colors.light.white,
     marginLeft: Spacing.sm,
+    alignSelf: 'flex-end',
+    backgroundColor: Colors.light.primary,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radius.full,
   },
   summaryCard: {
     backgroundColor: Colors.light.surface,

@@ -17,6 +17,7 @@ import Purchases, {
 } from 'react-native-purchases';
 
 import { logger } from '@/services/logger';
+import { Button } from '@/shared/components/ui/Button';
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
 import { usePurchase } from '../hooks/usePurchase';
 
@@ -211,26 +212,23 @@ export const PaywallScreen = () => {
           </View>
         )}
 
-        <TouchableOpacity
-          style={[
-            styles.cta,
-            (isPurchasing || !selectedPkg) && styles.ctaDisabled,
-          ]}
+        <Button
+          variant="primary"
           onPress={handlePurchase}
           disabled={isPurchasing || !selectedPkg}
-          activeOpacity={0.85}
+          loading={isPurchasing}
         >
-          <Text style={styles.ctaText}>{ctaLabel}</Text>
-        </TouchableOpacity>
+          {ctaLabel}
+        </Button>
 
-        <TouchableOpacity
-          style={styles.restoreBtn}
+        <Button
+          variant="ghost"
           onPress={handleRestore}
           disabled={isPurchasing}
-          activeOpacity={0.7}
+          style={styles.restoreBtn}
         >
           <Text style={styles.restoreText}>Restore Purchases</Text>
-        </TouchableOpacity>
+        </Button>
 
         <Text style={styles.legal}>{buildLegalText(selectedPkg)}</Text>
       </ScrollView>
@@ -364,19 +362,6 @@ const styles = StyleSheet.create({
     ...Typography.body,
     color: Colors.light.error,
     textAlign: 'center',
-  },
-  cta: {
-    backgroundColor: Colors.light.primary,
-    borderRadius: Radius.full,
-    paddingVertical: Spacing.lg,
-    alignItems: 'center',
-  },
-  ctaDisabled: {
-    backgroundColor: Colors.light.primary_disabled,
-  },
-  ctaText: {
-    ...Typography.button,
-    color: Colors.light.on_primary,
   },
   restoreBtn: {
     alignItems: 'center',
