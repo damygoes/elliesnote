@@ -88,6 +88,15 @@ export default function ProtectedLayout() {
             headerShadowVisible: false,
           }}
         />
+        <Stack.Screen
+          name="log/day-history"
+          options={{
+            presentation: 'formSheet',
+            headerShown: false,
+            sheetAllowedDetents: isIPad ? [1] : [0.75],
+            headerShadowVisible: false,
+          }}
+        />
       </Stack>
     </RequireAuth>
   );

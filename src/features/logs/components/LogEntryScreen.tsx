@@ -1,13 +1,15 @@
 import { useUser } from '@clerk/clerk-expo';
+import { router } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { usePremium } from '@/features/subscription/hooks/usePremium';
-import { Colors, Spacing } from '@/shared/constants/theme';
+import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
 import { toDateString } from '@/shared/utils/date';
 import { useCalendarMarkedDates } from '../hooks/useCalendarMarkedDates';
-import { LogFlashCalendar } from './LogFlashCalendar';
+import { useEntriesByDate } from '../store/useLogStore';
 import { LogEntryForm } from './LogEntryForm';
+import { LogFlashCalendar } from './LogFlashCalendar';
 
 export const LogEntryScreen = () => {
   const { user } = useUser();
@@ -16,6 +18,7 @@ export const LogEntryScreen = () => {
 
   const { marks } = useCalendarMarkedDates();
   const { isPremium } = usePremium();
+  const dayEntries = useEntriesByDate(selectedDate);
 
   return (
     <View style={styles.container}>
@@ -40,6 +43,24 @@ export const LogEntryScreen = () => {
           firstName={user?.firstName ?? undefined}
         />
       </ScrollView>
+
+      {dayEntries.length > 0 && (
+        <Pressable
+          style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
+          onPress={() =>
+            router.push({
+              pathname: '/(app)/(protected)/log/day-history',
+              params: { date: selectedDate },
+            })
+          }
+        >
+          <Text style={styles.fabText}>
+            View {dayEntries.length}{' '}
+            {dayEntries.length === 1 ? 'entry' : 'entries'} for this day
+          </Text>
+          <Text style={styles.fabArrow}>›</Text>
+        </Pressable>
+      )}
     </View>
   );
 };
@@ -56,5 +77,34 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: Colors.light.border,
     marginHorizontal: Spacing.xl,
+  },
+  fab: {
+    position: 'absolute',
+    bottom: Spacing.sm,
+    left: Spacing.xl,
+    right: Spacing.xl,
+    backgroundColor: Colors.light.primary,
+    borderRadius: Radius.full,
+    padding: Spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: Colors.light.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  fabPressed: {
+    opacity: 0.85,
+  },
+  fabText: {
+    ...Typography.label,
+    color: Colors.light.on_primary,
+  },
+  fabArrow: {
+    fontSize: 20,
+    color: Colors.light.on_primary,
+    lineHeight: 22,
   },
 });
