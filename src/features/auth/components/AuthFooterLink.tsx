@@ -31,12 +31,12 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 13,
     color: Colors.light.text_muted,
-    fontFamily: Fonts?.sans,
+    fontFamily: Fonts.sans,
   },
   footerLink: {
     fontSize: 13,
     color: Colors.light.primary,
-    fontFamily: Fonts?.sans,
+    fontFamily: Fonts.sans,
     textDecorationLine: 'underline',
   },
 });

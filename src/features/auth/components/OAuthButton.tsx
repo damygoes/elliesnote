@@ -1,11 +1,7 @@
-import { Colors } from '@/shared/constants/theme';
+import { Button } from '@/shared/components/ui/Button';
+import { Colors, Typography } from '@/shared/constants/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 type OAuthProviderType = 'google' | 'apple';
 
@@ -40,44 +36,33 @@ export function OAuthButton({
   const config = PROVIDER_CONFIG[provider];
 
   return (
-    <TouchableOpacity
+    <Button
       style={[
-        styles.button,
+        styles.base,
         {
           backgroundColor: config.backgroundColor,
           borderColor: config.borderColor,
         },
       ]}
-      activeOpacity={0.85}
       onPress={onPress}
+      loading={loading}
       disabled={loading}
     >
-      {loading ? (
-        <ActivityIndicator color={config.textColor} />
-      ) : (
-        <>
-          <Ionicons name={config.icon} size={18} color={config.textColor} />
-          <Text style={[styles.text, { color: config.textColor }]}>
-            {config.text}
-          </Text>
-        </>
-      )}
-    </TouchableOpacity>
+      <Ionicons name={config.icon} size={18} color={config.textColor} />
+      <Text style={[styles.text, { color: config.textColor }]}>
+        {config.text}
+      </Text>
+    </Button>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
+  base: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: 12,
     gap: 8,
-    borderWidth: 1,
   },
   text: {
-    fontSize: 17,
-    fontWeight: '600',
+    fontSize: Typography.button.fontSize,
+    fontWeight: Typography.button.fontWeight,
   },
 });

@@ -1,13 +1,13 @@
-import { Platform } from 'react-native';
-
 // --------------------------------------------------
 // PALETTE (raw colors — never used directly in UI)
 // --------------------------------------------------
 
 const palette = {
   // sage greens — calm, natural, not clinical
-  sage_primary: '#5C7A62',
-  sage_soft: '#EBF2EC',
+  sage_primary: '#40533F',
+  // sage_primary: '#5C7A62',
+  // sage_soft: '#7F906E',
+  sage_soft: '#ddeadf',
 
   // warm neutrals — easier on light-sensitive eyes than cool grays
   warm_100: '#F9F7F4',
@@ -19,7 +19,7 @@ const palette = {
   warm_900: '#1C1714',
 
   // base
-  white: '#FFFFFF',
+  white: '#FDFBF5',
   black: '#000000',
 
   // feedback — warm red, less harsh than a saturated error red
@@ -125,34 +125,42 @@ export const Typography = {
   heading: {
     fontSize: 32,
     fontWeight: '700' as const,
+    fontFamily: 'Nunito_700Bold',
   },
   subtitle: {
     fontSize: 28,
     fontWeight: '600' as const,
+    fontFamily: 'Nunito_600SemiBold',
   },
   label: {
     fontSize: 17,
     fontWeight: '400' as const,
+    fontFamily: 'Nunito_400Regular',
   },
   body: {
     fontSize: 15,
     fontWeight: '400' as const,
+    fontFamily: 'Nunito_400Regular',
   },
   caption: {
     fontSize: 14,
     fontWeight: '400' as const,
+    fontFamily: 'Nunito_400Regular',
   },
   small: {
     fontSize: 13,
     fontWeight: '400' as const,
+    fontFamily: 'Nunito_400Regular',
   },
   button: {
     fontSize: 18,
     fontWeight: '600' as const,
+    fontFamily: 'Nunito_600SemiBold',
   },
   buttonLarge: {
     fontSize: 24,
     fontWeight: '700' as const,
+    fontFamily: 'Nunito_700Bold',
   },
 } as const;
 
@@ -160,27 +168,11 @@ export const Typography = {
 // FONTS (platform-aware)
 // --------------------------------------------------
 
-export const Fonts = Platform.select({
-  ios: {
-    sans: 'system-ui',
-    serif: 'ui-serif',
-    rounded: 'ui-rounded',
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded:
-      "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});
+export const Fonts = {
+  sans: 'Nunito_400Regular',
+  sansSemiBold: 'Nunito_600SemiBold',
+  sansBold: 'Nunito_700Bold',
+} as const;
 
 // --------------------------------------------------
 // THEME HELPER (optional but useful)

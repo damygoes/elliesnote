@@ -1,14 +1,8 @@
 import * as ExpoCrypto from 'expo-crypto';
 import { useEffect, useState } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { Button } from '@/shared/components/ui/Button';
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
 import { toDateString } from '@/shared/utils/date';
 import { router } from 'expo-router';
@@ -154,16 +148,15 @@ export const LogEntryForm = ({
         </Text>
       )}
 
-      <TouchableOpacity
-        style={[styles.saveButton, !canSave && styles.saveButtonDisabled]}
-        onPress={handleSave}
+      <Button
+        variant="primary"
         disabled={!canSave}
-        activeOpacity={0.8}
+        onPress={handleSave}
         accessibilityLabel="Save log entry"
         accessibilityRole="button"
       >
-        <Text style={styles.saveButtonText}>Save</Text>
-      </TouchableOpacity>
+        Save
+      </Button>
     </ScrollView>
   );
 };
@@ -228,7 +221,7 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: Colors.light.primary,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.full,
     height: 56,
     alignItems: 'center',
     justifyContent: 'center',

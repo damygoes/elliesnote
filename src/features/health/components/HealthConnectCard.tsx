@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.primary_soft,
     borderRadius: Radius.lg,
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.xl,
   },
   nudgeText: {
     ...Typography.small,
