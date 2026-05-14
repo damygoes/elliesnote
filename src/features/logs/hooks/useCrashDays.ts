@@ -22,13 +22,19 @@ export const useCrashDays = () => {
         setIsLoading(false);
       }
 
+      const fetchStartedAt = Date.now();
       try {
         const fresh = await crashApiService.fetchAll(getTokenRef.current);
         if (!active) return;
         const serverDates = new Set(fresh.map((d) => d.date));
+        // Only keep local records added AFTER this fetch began — those are genuine
+        // in-flight optimistics. Anything older is superseded by the server response
+        // (including records deleted from the server since the last sync).
         const pending = useCrashStore
           .getState()
-          .crashDays.filter((d) => !serverDates.has(d.date));
+          .crashDays.filter(
+            (d) => d.createdAt > fetchStartedAt && !serverDates.has(d.date),
+          );
         const merged = [...fresh, ...pending];
         useCrashStore.setState({ crashDays: merged });
         crashStorageService.save(merged);

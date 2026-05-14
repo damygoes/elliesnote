@@ -62,7 +62,7 @@ const DayCell = ({ day, mark, onPress }: DayCellProps) => {
         {day.displayLabel}
       </Text>
 
-      {hasEntries && (
+      {/* {hasEntries && (
         <View style={[styles.badge, isSelected && styles.badgeOnSelected]}>
           <Text
             style={[styles.badgeText, isSelected && styles.badgeTextOnSelected]}
@@ -70,7 +70,7 @@ const DayCell = ({ day, mark, onPress }: DayCellProps) => {
             {entryCount}
           </Text>
         </View>
-      )}
+      )} */}
     </Pressable>
   );
 };

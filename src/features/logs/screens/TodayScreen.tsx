@@ -1,10 +1,18 @@
 import { useUser } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useRef, useState } from 'react';
 
 import { usePremium } from '@/features/subscription/hooks/usePremium';
 import { Button } from '@/shared/components/ui/Button';
-import { Colors, Spacing, Typography } from '@/shared/constants/theme';
+import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
 import { formatDate } from '@/shared/utils/date';
 import { getGreeting } from '@/shared/utils/greeting';
 import { CrashBanner } from '../components/CrashBanner';
@@ -26,6 +34,20 @@ export const TodayScreen = () => {
   const { todayCrash, logCrash, undoCrash } = useTodayCrash();
   const { isPremium } = usePremium();
   const deleteLogEntry = useDeleteLogEntry();
+  const [showBanner, setShowBanner] = useState(false);
+  const bannerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleLogCrash = () => {
+    logCrash();
+    setShowBanner(true);
+    bannerTimer.current = setTimeout(() => setShowBanner(false), 4000);
+  };
+
+  const handleUndoCrash = () => {
+    if (bannerTimer.current) clearTimeout(bannerTimer.current);
+    setShowBanner(false);
+    undoCrash();
+  };
 
   const handleEdit = (entry: LogEntry) => {
     router.push({
@@ -55,7 +77,7 @@ export const TodayScreen = () => {
         style={styles.container}
         contentContainerStyle={styles.content}
       >
-        {todayCrash && <CrashBanner onUndo={undoCrash} />}
+        {todayCrash && showBanner && <CrashBanner onUndo={handleUndoCrash} />}
 
         <View style={styles.header}>
           <Text style={styles.date}>{formatDate(new Date())}</Text>
@@ -97,9 +119,23 @@ export const TodayScreen = () => {
         </Button>
 
         {!todayCrash && (
-          <Button variant="danger" onPress={logCrash}>
+          <Button variant="danger" onPress={handleLogCrash}>
             I&apos;m Crashing Today
           </Button>
+        )}
+
+        {todayCrash && !showBanner && (
+          <View style={styles.crashSettled}>
+            <View style={styles.crashSettledInfo}>
+              <Text style={styles.crashSettledLabel}>Crash day logged</Text>
+              <Text style={styles.crashSettledSub}>
+                Take it easy today. Rest is part of recovery.
+              </Text>
+            </View>
+            <TouchableOpacity onPress={handleUndoCrash} hitSlop={8}>
+              <Text style={styles.crashSettledUndo}>Undo</Text>
+            </TouchableOpacity>
+          </View>
         )}
       </View>
     </View>
@@ -154,5 +190,36 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xl,
     gap: Spacing.md,
     backgroundColor: Colors.light.background_primary,
+  },
+  crashSettled: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FAF0EE',
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.light.error,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    gap: Spacing.md,
+  },
+  crashSettledInfo: {
+    flex: 1,
+    gap: 2,
+  },
+  crashSettledLabel: {
+    ...Typography.label,
+    color: Colors.light.error,
+    fontWeight: '600',
+  },
+  crashSettledSub: {
+    ...Typography.small,
+    color: Colors.light.error,
+    opacity: 0.8,
+  },
+  crashSettledUndo: {
+    ...Typography.caption,
+    color: Colors.light.error,
+    textDecorationLine: 'underline',
   },
 });

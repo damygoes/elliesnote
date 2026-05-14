@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const CrashDaySchema = z.object({
-  id: z.string().uuid(),
-  userId: z.string().uuid(),
+  id: z.string(),
+  userId: z.string(),
   date: z.string(), // 'YYYY-MM-DD'
   createdAt: z.number().int().positive(),
 });

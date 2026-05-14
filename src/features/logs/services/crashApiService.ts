@@ -4,17 +4,23 @@ type GetToken = () => Promise<string | null>;
 
 type ApiRow = {
   id: string;
-  userId: string;
+  userId?: string;
+  user_id?: string;
   date: string;
-  createdAt: string;
+  createdAt?: string;
+  created_at?: string;
 };
 
 function mapRowToCrashDay(row: ApiRow): CrashDay {
+  const rawTs = row.createdAt ?? row.created_at ?? '';
+  // Normalize PostgreSQL timestamp ("2026-05-14 18:36:26+00") to ISO 8601
+  const normalized = rawTs.replace(' ', 'T').replace(/\+(\d{2})$/, '+$1:00');
+  const createdAt = Date.parse(normalized);
   return {
     id: row.id,
-    userId: row.userId,
-    date: row.date,
-    createdAt: new Date(row.createdAt).getTime(),
+    userId: row.userId ?? row.user_id ?? '',
+    date: row.date.slice(0, 10),
+    createdAt: isNaN(createdAt) ? Date.now() : createdAt,
   };
 }
 
@@ -41,7 +47,8 @@ export const crashApiService = {
     }
 
     const json = await res.json();
-    const parsed = CrashDaySchema.safeParse(mapRowToCrashDay(json));
+    const row: ApiRow = json?.data ?? json;
+    const parsed = CrashDaySchema.safeParse(mapRowToCrashDay(row));
     if (!parsed.success) throw new Error('Invalid crash day response');
     return parsed.data;
   },

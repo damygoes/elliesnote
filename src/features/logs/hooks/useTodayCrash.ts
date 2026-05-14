@@ -1,4 +1,5 @@
 import { useAuth, useUser } from '@clerk/clerk-expo';
+import * as ExpoCrypto from 'expo-crypto';
 import { useMemo } from 'react';
 
 import { toDateString } from '@/shared/utils/date';
@@ -15,16 +16,15 @@ export const useTodayCrash = () => {
   const userId = user?.id ?? '';
 
   const todayCrash = useMemo(
-    () =>
-      crashDays.find((d) => d.date === today && d.userId === userId) ?? null,
-    [crashDays, today, userId],
+    () => crashDays.find((d) => d.date.slice(0, 10) === today) ?? null,
+    [crashDays, today],
   );
 
   const logCrash = async () => {
     if (todayCrash) return;
 
     const optimistic = {
-      id: crypto.randomUUID(),
+      id: ExpoCrypto.randomUUID(),
       userId,
       date: today,
       createdAt: Date.now(),
@@ -36,9 +36,12 @@ export const useTodayCrash = () => {
 
     try {
       const confirmed = await crashApiService.create(today, getToken);
-      // Replace optimistic record with server-confirmed one
-      removeCrashDay(optimistic.id);
-      addCrashDay(confirmed);
+      // Atomic replace: swap optimistic for server-confirmed in one update
+      useCrashStore.setState((state) => ({
+        crashDays: state.crashDays.map((d) =>
+          d.id === optimistic.id ? confirmed : d,
+        ),
+      }));
       const updated = useCrashStore.getState().crashDays;
       crashStorageService.save(updated);
     } catch {
