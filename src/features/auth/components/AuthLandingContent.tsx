@@ -112,14 +112,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background_primary,
   },
   hero: {
-    flex: 1,
+    flex: isIPad ? 0.5 : 1,
     alignItems: 'center',
     justifyContent: 'flex-end',
     paddingBottom: Spacing.lg,
   },
   logo: {
-    width: isIPad ? 180 : 240,
-    height: isIPad ? 180 : 240,
+    width: isIPad ? 300 : 240,
+    height: isIPad ? 300 : 240,
     marginBottom: -24,
   },
   actions: {

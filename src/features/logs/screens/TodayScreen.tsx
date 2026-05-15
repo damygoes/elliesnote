@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { useRef, useState } from 'react';
 import {
   Alert,
   ScrollView,
@@ -7,14 +8,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useRef, useState } from 'react';
 
 import { usePremium } from '@/features/subscription/hooks/usePremium';
 import { Button } from '@/shared/components/ui/Button';
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
+import { useUserProfile } from '@/shared/hooks/useUserProfile';
 import { formatDate } from '@/shared/utils/date';
 import { getGreeting } from '@/shared/utils/greeting';
-import { useUserProfile } from '@/shared/hooks/useUserProfile';
+import { isIPad } from '@/shared/utils/isIPad';
 import { CrashBanner } from '../components/CrashBanner';
 import { TodayEmptyState } from '../components/TodayEmptyState';
 import { TodayEntryCard } from '../components/TodayEntryCard';
@@ -151,12 +152,13 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    paddingHorizontal: isIPad ? Spacing.xl : undefined,
   },
   content: {
-    paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.xxl,
-    paddingBottom: Spacing.md,
-    gap: Spacing.xl,
+    paddingHorizontal: isIPad ? Spacing.xxl : Spacing.xl,
+    paddingTop: isIPad ? Spacing['3xl'] : Spacing.xxl,
+    paddingBottom: isIPad ? Spacing.xl : Spacing.md,
+    gap: isIPad ? Spacing.xxl : Spacing.xl,
   },
   header: {
     gap: Spacing.xs,
@@ -190,7 +192,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.xl,
-    gap: Spacing.md,
+    gap: Spacing.lg,
     backgroundColor: Colors.light.background_primary,
   },
   crashSettled: {

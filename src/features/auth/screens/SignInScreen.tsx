@@ -2,6 +2,7 @@ import { BackButton } from '@/shared/components/BackButton';
 import { Button } from '@/shared/components/ui/Button';
 import { FormField } from '@/shared/components/ui/FormField';
 import { Colors } from '@/shared/constants/theme';
+import { isIPad } from '@/shared/utils/isIPad';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
@@ -165,20 +166,20 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 24,
+    paddingHorizontal: isIPad ? 52 : 24,
+    paddingTop: isIPad ? 52 : 24,
     paddingBottom: 12,
     justifyContent: 'center',
-    gap: 32,
+    gap: isIPad ? 52 : 32,
   },
   content: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    gap: 32,
+    gap: isIPad ? 52 : 32,
   },
   card: {
-    gap: 18,
+    gap: isIPad ? 32 : 18,
   },
   errorText: {
     color: Colors.light.error,
