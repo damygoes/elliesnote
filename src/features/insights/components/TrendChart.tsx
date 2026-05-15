@@ -228,8 +228,8 @@ export const TrendChart = ({
           data={chartData}
           xKey="x"
           yKeys={yKeys}
-          domain={{ x: [-0.5, rangeDays - 0.5], y: [0, 5.5] }}
-          padding={{ top: 12, bottom: 0, left: 4, right: 4 }}
+          domain={{ x: [-0.5, rangeDays - 0.5], y: [-0.5, 5.5] }}
+          padding={{ top: 12, bottom: 10, left: 4, right: 4 }}
         >
           {({ points, chartBounds }) => {
             // Energy trend line uses pixel-space averages (same pattern as before)
@@ -301,7 +301,7 @@ export const TrendChart = ({
                       key={dayIdx}
                       p1={{ x, y: chartBounds.top }}
                       p2={{ x, y: chartBounds.bottom }}
-                      color="#C97B6A"
+                      color={Colors.light.error}
                       strokeWidth={1}
                       opacity={0.4}
                     />
@@ -350,7 +350,7 @@ export const TrendChart = ({
             <View
               style={[
                 styles.legendLine,
-                { backgroundColor: '#C97B6A', opacity: 0.6 },
+                { backgroundColor: Colors.light.error, opacity: 0.6 },
               ]}
             />
             <Text style={styles.legendLabel}>Crash</Text>
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   container: {
-    height: 180,
+    height: 280,
     backgroundColor: Colors.light.surface,
     borderRadius: Radius.lg,
     borderWidth: 1,

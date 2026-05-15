@@ -88,7 +88,7 @@ export const InsightsScreen = () => {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionLabel}>Energy</Text>
+        <Text style={styles.sectionLabel}>Trends</Text>
         <SeriesFilterPills
           activeSeries={activeSeries}
           onToggle={handleSeriesToggle}
@@ -105,7 +105,7 @@ export const InsightsScreen = () => {
           crashDays={crashDays}
         />
         {activeSeries.has('symptoms') && (
-          <SymptomDotRows stats={stats} days={days} />
+          <SymptomDotRows stats={stats} days={days} range={range} />
         )}
       </View>
 

@@ -3,26 +3,34 @@ import { StyleSheet, Text, View } from 'react-native';
 import { SYMPTOMS, type Symptom } from '@/features/logs/types/log-entry';
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
 import { SERIES_CONFIG } from '../constants/seriesConfig';
-import type { DataPoint } from '../hooks/useInsightsData';
+import type { DataPoint, Range } from '../hooks/useInsightsData';
 
-const SYMPTOM_SHORT: Record<Symptom, string> = {
-  fatigue: 'FAT',
-  brain_fog: 'FOG',
-  headache: 'HA',
-  muscle_pain: 'MUS',
-  joint_pain: 'JNT',
-  sleep_disturbance: 'SLP',
-  dizziness: 'DIZ',
-  nausea: 'NAU',
+const SYMPTOM_LABEL: Record<Symptom, string> = {
+  fatigue: 'Fatigue',
+  brain_fog: 'Brain fog',
+  headache: 'Headache',
+  muscle_pain: 'Muscle pain',
+  joint_pain: 'Joint pain',
+  sleep_disturbance: 'Poor sleep',
+  dizziness: 'Dizziness',
+  nausea: 'Nausea',
 };
+
+const DAY_ABBR = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] as const;
+
+function getDayLabel(dayKey: string, range: Range): string {
+  const d = new Date(`${dayKey}T00:00:00`);
+  if (range === 7) return DAY_ABBR[d.getDay()] ?? '';
+  return String(d.getDate());
+}
 
 type Props = {
   stats: DataPoint[];
   days: string[];
+  range: Range;
 };
 
-export function SymptomDotRows({ stats, days }: Props) {
-  // Build dayKey → set of symptoms present that day
+export function SymptomDotRows({ stats, days, range }: Props) {
   const symptomsByDay = new Map<string, Set<string>>();
   for (const entry of stats) {
     let set = symptomsByDay.get(entry.dayKey);
@@ -35,7 +43,6 @@ export function SymptomDotRows({ stats, days }: Props) {
     }
   }
 
-  // Only render rows for symptoms that appear at least once in the period
   const activeSymptoms = SYMPTOMS.filter((symptom) =>
     [...symptomsByDay.values()].some((set) => set.has(symptom)),
   );
@@ -46,9 +53,21 @@ export function SymptomDotRows({ stats, days }: Props) {
 
   return (
     <View style={styles.container}>
+      {/* Day-header row */}
+      <View style={styles.row}>
+        <View style={styles.labelOffset} />
+        <View style={styles.daysRow}>
+          {days.map((dayKey) => (
+            <Text key={dayKey} style={styles.dayHeader}>
+              {getDayLabel(dayKey, range)}
+            </Text>
+          ))}
+        </View>
+      </View>
+
       {activeSymptoms.map((symptom) => (
         <View key={symptom} style={styles.row}>
-          <Text style={styles.label}>{SYMPTOM_SHORT[symptom]}</Text>
+          <Text style={styles.label}>{SYMPTOM_LABEL[symptom]}</Text>
           <View style={styles.daysRow}>
             {days.map((dayKey) => {
               const hasSymptom =
@@ -77,13 +96,22 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 14,
+    minHeight: 18,
+  },
+  labelOffset: {
+    width: 80,
+  },
+  dayHeader: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 9,
+    color: Colors.light.text_muted,
   },
   label: {
     ...Typography.small,
     color: Colors.light.text_muted,
-    width: 28,
-    fontSize: 9,
+    width: 80,
+    fontSize: 10,
   },
   daysRow: {
     flex: 1,
@@ -95,8 +123,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
 });
