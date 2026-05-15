@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
+import { isIPad } from '@/shared/utils/isIPad';
 import { SettingsRow } from '../components/SettingsRow';
 
 export const SettingsScreen = () => {
@@ -72,6 +73,8 @@ export const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.light.background_primary,
+    padding: isIPad ? Spacing['5xl'] : undefined,
   },
   contentWrapper: {
     flex: 1,

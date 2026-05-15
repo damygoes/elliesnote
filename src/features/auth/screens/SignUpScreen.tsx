@@ -1,6 +1,6 @@
 import { Button } from '@/shared/components/ui/Button';
 import { FormField } from '@/shared/components/ui/FormField';
-import { Colors } from '@/shared/constants/theme';
+import { Colors, Spacing } from '@/shared/constants/theme';
 import { isIPad } from '@/shared/utils/isIPad';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -261,21 +261,21 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: isIPad ? 52 : 24,
-    paddingTop: isIPad ? 52 : 24,
-    paddingBottom: 12,
+    paddingHorizontal: isIPad ? Spacing['5xl'] : Spacing.xl,
+    paddingTop: isIPad ? Spacing['5xl'] : Spacing.xl,
+    paddingBottom: Spacing.lg,
     justifyContent: 'center',
-    gap: isIPad ? 52 : 24,
+    gap: isIPad ? Spacing['5xl'] : Spacing.xl,
   },
   content: {
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    gap: isIPad ? 52 : 32,
+    gap: isIPad ? Spacing['5xl'] : Spacing.xl,
   },
   card: {
-    gap: isIPad ? 32 : 18,
+    gap: isIPad ? Spacing.xxl : Spacing.lg,
   },
   errorText: {
     color: Colors.light.error,

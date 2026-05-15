@@ -9,6 +9,7 @@ import { useCrashDays } from '@/features/logs/hooks/useCrashDays';
 import { useCrashStore } from '@/features/logs/store/useCrashStore';
 import { usePremium } from '@/features/subscription/hooks/usePremium';
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
+import { isIPad } from '@/shared/utils/isIPad';
 import { CrashCard } from '../components/CrashCard';
 import { InsightCard } from '../components/InsightCard';
 import { RangeSelector } from '../components/RangeSelector';
@@ -145,6 +146,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light.background_primary,
+    padding: isIPad ? Spacing['5xl'] : undefined,
   },
   content: {
     paddingHorizontal: Spacing.xl,

@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background_primary,
   },
   hero: {
-    flex: isIPad ? 0.5 : 1,
+    flex: isIPad ? 0.7 : 1,
     alignItems: 'center',
     justifyContent: 'flex-end',
     paddingBottom: Spacing.lg,

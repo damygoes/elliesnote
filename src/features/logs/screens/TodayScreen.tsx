@@ -117,12 +117,17 @@ export const TodayScreen = () => {
         <Button
           variant="primary"
           onPress={() => router.navigate('/(app)/(protected)/(tabs)/log')}
+          style={isIPad ? { width: 200 } : undefined}
         >
           Log Entry
         </Button>
 
         {!todayCrash && (
-          <Button variant="danger" onPress={handleLogCrash}>
+          <Button
+            variant="danger"
+            onPress={handleLogCrash}
+            style={isIPad ? { width: 200 } : undefined}
+          >
             I&apos;m Crashing Today
           </Button>
         )}
@@ -149,16 +154,16 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: Colors.light.background_primary,
+    padding: isIPad ? Spacing['5xl'] : 0,
   },
   container: {
     flex: 1,
-    paddingHorizontal: isIPad ? Spacing.xl : undefined,
   },
   content: {
-    paddingHorizontal: isIPad ? Spacing.xxl : Spacing.xl,
-    paddingTop: isIPad ? Spacing['3xl'] : Spacing.xxl,
-    paddingBottom: isIPad ? Spacing.xl : Spacing.md,
-    gap: isIPad ? Spacing.xxl : Spacing.xl,
+    paddingHorizontal: Spacing.xxl,
+    paddingTop: Spacing['3xl'],
+    paddingBottom: Spacing.xl,
+    gap: Spacing.xl,
   },
   header: {
     gap: Spacing.xs,
@@ -189,23 +194,25 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   actions: {
+    flexDirection: isIPad ? 'row' : 'column',
+    justifyContent: 'center',
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.xl,
-    gap: Spacing.lg,
+    gap: isIPad ? Spacing.lg : Spacing.md,
     backgroundColor: Colors.light.background_primary,
   },
   crashSettled: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FAF0EE',
+    backgroundColor: Colors.light.background_primary,
     borderRadius: Radius.lg,
     borderWidth: 1,
     borderColor: Colors.light.error,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    gap: Spacing.md,
+    gap: isIPad ? Spacing.lg : Spacing.md,
   },
   crashSettledInfo: {
     flex: 1,

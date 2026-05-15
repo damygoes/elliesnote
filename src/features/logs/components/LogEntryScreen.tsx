@@ -1,12 +1,13 @@
+import { useUserProfile } from '@/shared/hooks/useUserProfile';
 import { useUser } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
-import { useUserProfile } from '@/shared/hooks/useUserProfile';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { usePremium } from '@/features/subscription/hooks/usePremium';
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
 import { toDateString } from '@/shared/utils/date';
+import { isIPad } from '@/shared/utils/isIPad';
 import { useCalendarMarkedDates } from '../hooks/useCalendarMarkedDates';
 import { useEntriesByDate } from '../store/useLogStore';
 import { LogEntryForm } from './LogEntryForm';
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light.background_primary,
+    padding: isIPad ? Spacing['5xl'] : undefined,
   },
   content: {
     paddingBottom: 40,

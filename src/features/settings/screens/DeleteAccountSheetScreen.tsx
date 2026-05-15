@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { SheetHeader } from '@/shared/components/SheetHeader';
 import { Button } from '@/shared/components/ui/Button';
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
-import { SheetHeader } from '@/shared/components/SheetHeader';
+import { isIPad } from '@/shared/utils/isIPad';
 
 export const DeleteAccountSheetScreen = () => {
   const { getToken } = useAuth();
@@ -42,12 +43,7 @@ export const DeleteAccountSheetScreen = () => {
           <Button variant="secondary" onPress={() => router.back()}>
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            onPress={handleDelete}
-            loading={isDeleting}
-            style={styles.deleteButton}
-          >
+          <Button variant="danger" onPress={handleDelete} loading={isDeleting}>
             Delete account
           </Button>
         </View>
@@ -60,10 +56,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light.background_primary,
+    gap: isIPad ? Spacing.md : undefined,
   },
   content: {
     padding: Spacing.xl,
-    gap: Spacing.xxl,
+    gap: isIPad ? Spacing['4xl'] : Spacing.xxl,
   },
   warning: {
     ...Typography.body,
@@ -72,9 +69,5 @@ const styles = StyleSheet.create({
   },
   buttons: {
     gap: Spacing.lg,
-  },
-  deleteButton: {
-    backgroundColor: Colors.light.error,
-    borderColor: Colors.light.error,
   },
 });
