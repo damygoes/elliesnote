@@ -1,33 +1,43 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect } from 'react';
+import { useUser } from '@clerk/clerk-expo';
 
 import { requestPermissions } from '../services/healthKitService';
 import { useHealthPermissionStore } from '../store';
 
-const PERMISSION_KEY = '@elliesnote/health-permission';
+const permissionKey = (userId: string) =>
+  `@elliesnote/health-permission/${userId}`;
 
 export function useHealthPermission() {
+  const { user } = useUser();
+  const userId = user?.id;
+
   const hasPermission = useHealthPermissionStore((s) => s.hasPermission);
   const setHasPermission = useHealthPermissionStore((s) => s.setHasPermission);
 
-  // Load from AsyncStorage once — skipped if another instance already loaded it
   useEffect(() => {
+    if (!userId) {
+      setHasPermission(null);
+      return;
+    }
     if (hasPermission !== null) return;
-    AsyncStorage.getItem(PERMISSION_KEY).then((stored) => {
+    AsyncStorage.getItem(permissionKey(userId)).then((stored) => {
       setHasPermission(stored === 'true');
     });
-  }, [hasPermission, setHasPermission]);
+  }, [userId, hasPermission, setHasPermission]);
 
   const request = useCallback(async () => {
+    if (!userId) return;
     const granted = await requestPermissions();
-    await AsyncStorage.setItem(PERMISSION_KEY, String(granted));
+    await AsyncStorage.setItem(permissionKey(userId), String(granted));
     setHasPermission(granted);
-  }, [setHasPermission]);
+  }, [userId, setHasPermission]);
 
   const disconnect = useCallback(async () => {
-    await AsyncStorage.removeItem(PERMISSION_KEY);
+    if (!userId) return;
+    await AsyncStorage.removeItem(permissionKey(userId));
     setHasPermission(false);
-  }, [setHasPermission]);
+  }, [userId, setHasPermission]);
 
   return { hasPermission, request, disconnect };
 }
