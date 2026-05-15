@@ -37,7 +37,8 @@ export const InsightCard = ({ insights, isLoading, isPremium }: Props) => {
     return (
       <View style={styles.card}>
         <Text style={styles.empty}>
-          Keep logging — insights unlock after a few more days
+          Keep logging — insights combine your energy logs with health data from
+          Apple Health
         </Text>
       </View>
     );

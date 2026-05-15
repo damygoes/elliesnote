@@ -3,22 +3,51 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { HealthConnectCard } from '@/features/health/components/HealthConnectCard';
+import { useHealthPermission } from '@/features/health/hooks/useHealthPermission';
 import { useHealthSync } from '@/features/health/hooks/useHealthSync';
+import { useCrashStore } from '@/features/logs/store/useCrashStore';
 import { usePremium } from '@/features/subscription/hooks/usePremium';
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
-import { EnergyChart } from '../components/EnergyChart';
+import { SeriesFilterPills } from '../components/SeriesFilterPills';
+import { SymptomDotRows } from '../components/SymptomDotRows';
+import { TrendChart } from '../components/TrendChart';
 import { InsightCard } from '../components/InsightCard';
 import { RangeSelector } from '../components/RangeSelector';
 import { StreakCard } from '../components/StreakCard';
-import { type Range, useInsightsData } from '../hooks/useInsightsData';
+import {
+  type Range,
+  type SeriesKey,
+  useInsightsData,
+} from '../hooks/useInsightsData';
 
 export const InsightsScreen = () => {
   const { isPremium } = usePremium();
   const [range, setRange] = useState<Range>(7);
-  const { stats, days, streak, insights, isLoading, hasError, refresh } =
-    useInsightsData(range);
+  const {
+    stats,
+    days,
+    streak,
+    insights,
+    healthSeries,
+    isLoading,
+    hasError,
+    refresh,
+  } = useInsightsData(range);
+
+  const crashDays = useCrashStore((state) => state.crashDays);
+  const { hasPermission } = useHealthPermission();
+  const [activeSeries, setActiveSeries] = useState<Set<SeriesKey>>(new Set());
 
   useHealthSync(days);
+
+  const handleSeriesToggle = useCallback((key: SeriesKey) => {
+    setActiveSeries((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }, []);
 
   const prevIsPremiumRef = useRef(isPremium);
   useEffect(() => {
@@ -60,12 +89,24 @@ export const InsightsScreen = () => {
 
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Energy</Text>
-        <EnergyChart
+        <SeriesFilterPills
+          activeSeries={activeSeries}
+          onToggle={handleSeriesToggle}
+          healthSeries={healthSeries}
+          hasHealthPermission={hasPermission === true}
+        />
+        <TrendChart
           stats={stats}
           days={days}
           range={range}
           isLoading={isLoading}
+          activeSeries={activeSeries}
+          healthSeries={healthSeries}
+          crashDays={crashDays}
         />
+        {activeSeries.has('symptoms') && (
+          <SymptomDotRows stats={stats} days={days} />
+        )}
       </View>
 
       <View style={styles.section}>

@@ -104,18 +104,19 @@ export async function fetchDailySnapshot(
 ): Promise<DailyHealthSnapshot> {
   if (Platform.OS !== 'ios') return NULL_SNAPSHOT(date);
 
-  const [sleepSamples, restingHR, hrvSamples, stepsResult] = await Promise.all([
-    getSamples('getSleepSamples', sleepWindow(date)),
-    getSingle('getRestingHeartRate', dayWindow(date)),
-    getSamples('getHeartRateVariabilitySamples', dayWindow(date)),
-    getSingle('getStepCount', dayWindow(date)),
-  ]);
+  const [sleepSamples, restingHRSamples, hrvSamples, stepsResult] =
+    await Promise.all([
+      getSamples('getSleepSamples', sleepWindow(date)),
+      getSamples('getRestingHeartRate', dayWindow(date)),
+      getSamples('getHeartRateVariabilitySamples', dayWindow(date)),
+      getSingle('getStepCount', dayWindow(date)),
+    ]);
 
   return {
     date,
     sleepMinutes:
       sleepSamples.length > 0 ? sumSleepMinutes(sleepSamples) : null,
-    restingHeartRate: restingHR?.value ?? null,
+    restingHeartRate: restingHRSamples[0]?.value ?? null,
     hrv: averageValue(hrvSamples),
     steps: stepsResult?.value ?? null,
   };

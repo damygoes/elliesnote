@@ -2,13 +2,32 @@ import { useAuth } from '@clerk/clerk-expo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useHealthPermissionStore } from '@/features/health/store';
 import { getTzOffsetMinutes } from '@/shared/utils/tzOffset';
+import {
+  HEALTH_SERIES_KEYS,
+  type HealthSeriesKey,
+  type SeriesKey,
+} from '../constants/seriesConfig';
 
 export type DataPoint = {
   dayKey: string;
   dayIndex: number;
   energyLevel: number;
+  symptoms: string[];
 };
+
+export type HealthMetricPoint = {
+  dayKey: string;
+  dayIndex: number;
+  value: number;
+};
+
+export type HealthMetricSeries = Partial<
+  Record<HealthSeriesKey, HealthMetricPoint[]>
+>;
+
+export type { HealthSeriesKey, SeriesKey };
 
 export type InsightType =
   | 'summary'
@@ -31,11 +50,12 @@ export type InsightsData = {
   days: string[];
   streak: number;
   insights: InsightItem[];
+  healthSeries: HealthMetricSeries;
 };
 
 export type Range = 7 | 14 | 30;
 
-const cacheKey = (range: Range) => `@elliesnote/insights-v3-${range}`;
+const cacheKey = (range: Range) => `@elliesnote/insights-v4-${range}`;
 
 async function readCache(range: Range): Promise<InsightsData | null> {
   try {
@@ -52,6 +72,56 @@ async function writeCache(range: Range, data: InsightsData): Promise<void> {
   } catch {}
 }
 
+async function fetchHealthSeries(
+  days: string[],
+  token: string,
+  base: string,
+): Promise<HealthMetricSeries> {
+  const hasPermission = useHealthPermissionStore.getState().hasPermission;
+  if (!hasPermission || days.length === 0) return {};
+
+  const from = days[0];
+  const to = days[days.length - 1];
+  const dayIndexMap = new Map(days.map((d, i) => [d, i]));
+  const headers = { Authorization: `Bearer ${token}` };
+
+  const results = await Promise.allSettled(
+    HEALTH_SERIES_KEYS.map((metricType) =>
+      fetch(
+        `${base}/api/me/health-metrics?metricType=${metricType}&from=${from}&to=${to}&limit=200`,
+        { headers },
+      ).then((r) => (r.ok ? r.json() : null)),
+    ),
+  );
+
+  const series: HealthMetricSeries = {};
+  for (let i = 0; i < HEALTH_SERIES_KEYS.length; i++) {
+    const key = HEALTH_SERIES_KEYS[i];
+    const result = results[i];
+    if (result.status !== 'fulfilled' || !result.value?.data) continue;
+
+    const rows: { measuredAt: string; value: number }[] = result.value.data;
+    // rows are desc by measuredAt — take first (latest) per UTC date
+    const seen = new Set<string>();
+    const points: HealthMetricPoint[] = [];
+
+    for (const row of rows) {
+      const dateStr = row.measuredAt.slice(0, 10);
+      if (seen.has(dateStr)) continue;
+      seen.add(dateStr);
+      const dayIndex = dayIndexMap.get(dateStr);
+      if (dayIndex === undefined) continue;
+      points.push({ dayKey: dateStr, dayIndex, value: row.value });
+    }
+
+    if (points.length > 0) {
+      series[key] = points.sort((a, b) => a.dayIndex - b.dayIndex);
+    }
+  }
+
+  return series;
+}
+
 export const useInsightsData = (range: Range) => {
   const { getToken } = useAuth();
   const getTokenRef = useRef(getToken);
@@ -62,6 +132,7 @@ export const useInsightsData = (range: Range) => {
     days: [],
     streak: 0,
     insights: [],
+    healthSeries: {},
   });
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -77,7 +148,11 @@ export const useInsightsData = (range: Range) => {
 
       const cached = await readCache(range);
       if (!cancelled && cached) {
-        setData({ ...cached, insights: cached.insights ?? [] });
+        setData({
+          ...cached,
+          insights: cached.insights ?? [],
+          healthSeries: cached.healthSeries ?? {},
+        });
         setIsLoading(false);
       }
 
@@ -86,7 +161,7 @@ export const useInsightsData = (range: Range) => {
         if (!token || cancelled) return;
 
         const tz = getTzOffsetMinutes();
-        const base = process.env.EXPO_PUBLIC_API_URL;
+        const base = process.env.EXPO_PUBLIC_API_URL ?? '';
         const headers = { Authorization: `Bearer ${token}` };
 
         const [statsRes, streakRes, insightRes] = await Promise.all([
@@ -118,11 +193,17 @@ export const useInsightsData = (range: Range) => {
 
         if (cancelled) return;
 
+        const days: string[] = statsJson?.data?.days ?? [];
+        const healthSeries = await fetchHealthSeries(days, token, base);
+
+        if (cancelled) return;
+
         const fresh: InsightsData = {
           stats: statsJson?.data?.entries ?? [],
-          days: statsJson?.data?.days ?? [],
+          days,
           streak: Number(streakJson?.data?.streakDays ?? 0),
           insights: insightJson?.data?.insights ?? [],
+          healthSeries,
         };
 
         setData(fresh);
