@@ -1,19 +1,21 @@
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { HealthConnectCard } from '@/features/health/components/HealthConnectCard';
 import { useHealthPermission } from '@/features/health/hooks/useHealthPermission';
 import { useHealthSync } from '@/features/health/hooks/useHealthSync';
+import { useCrashDays } from '@/features/logs/hooks/useCrashDays';
 import { useCrashStore } from '@/features/logs/store/useCrashStore';
 import { usePremium } from '@/features/subscription/hooks/usePremium';
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
-import { SeriesFilterPills } from '../components/SeriesFilterPills';
-import { SymptomDotRows } from '../components/SymptomDotRows';
-import { TrendChart } from '../components/TrendChart';
+import { CrashCard } from '../components/CrashCard';
 import { InsightCard } from '../components/InsightCard';
 import { RangeSelector } from '../components/RangeSelector';
+import { SeriesFilterPills } from '../components/SeriesFilterPills';
 import { StreakCard } from '../components/StreakCard';
+import { SymptomDotRows } from '../components/SymptomDotRows';
+import { TrendChart } from '../components/TrendChart';
 import {
   type Range,
   type SeriesKey,
@@ -34,7 +36,13 @@ export const InsightsScreen = () => {
     refresh,
   } = useInsightsData(range);
 
+  useCrashDays();
   const crashDays = useCrashStore((state) => state.crashDays);
+  const daysSet = useMemo(() => new Set(days), [days]);
+  const crashDaysInRange = useMemo(
+    () => crashDays.filter((d) => daysSet.has(d.date)),
+    [crashDays, daysSet],
+  );
   const { hasPermission } = useHealthPermission();
   const [activeSeries, setActiveSeries] = useState<Set<SeriesKey>>(new Set());
 
@@ -84,7 +92,14 @@ export const InsightsScreen = () => {
 
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Streak</Text>
-        <StreakCard streakDays={streak} isLoading={isLoading} />
+        <View style={styles.statsRow}>
+          <View style={styles.statItem}>
+            <StreakCard streakDays={streak} isLoading={isLoading} />
+          </View>
+          <View style={styles.statItem}>
+            <CrashCard count={crashDaysInRange.length} isLoading={isLoading} />
+          </View>
+        </View>
       </View>
 
       <View style={styles.section}>
@@ -139,6 +154,13 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: Spacing.md,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+  },
+  statItem: {
+    flex: 1,
   },
   title: {
     fontSize: Typography.subtitle.fontSize,

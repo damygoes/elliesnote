@@ -302,8 +302,8 @@ export const TrendChart = ({
                       p1={{ x, y: chartBounds.top }}
                       p2={{ x, y: chartBounds.bottom }}
                       color={Colors.light.error}
-                      strokeWidth={1}
-                      opacity={0.4}
+                      strokeWidth={1.5}
+                      opacity={0.6}
                     />
                   );
                 })}
