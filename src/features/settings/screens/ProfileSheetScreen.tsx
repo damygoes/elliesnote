@@ -7,7 +7,7 @@ import { Button } from '@/shared/components/ui/Button';
 import { FormField } from '@/shared/components/ui/FormField';
 import { Colors, Spacing, Typography } from '@/shared/constants/theme';
 import { SheetHeader } from '@/shared/components/SheetHeader';
-import { useUserProfile } from '../hooks/useUserProfile';
+import { useUserProfile } from '@/shared/hooks/useUserProfile';
 
 export const ProfileSheetScreen = () => {
   const { profile, save, isSaving, error } = useUserProfile();

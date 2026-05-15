@@ -1,4 +1,3 @@
-import { useUser } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
 import {
   Alert,
@@ -15,6 +14,7 @@ import { Button } from '@/shared/components/ui/Button';
 import { Colors, Radius, Spacing, Typography } from '@/shared/constants/theme';
 import { formatDate } from '@/shared/utils/date';
 import { getGreeting } from '@/shared/utils/greeting';
+import { useUserProfile } from '@/shared/hooks/useUserProfile';
 import { CrashBanner } from '../components/CrashBanner';
 import { TodayEmptyState } from '../components/TodayEmptyState';
 import { TodayEntryCard } from '../components/TodayEntryCard';
@@ -27,7 +27,7 @@ import { useTodayEntries } from '../hooks/useTodayEntries';
 import type { LogEntry } from '../types/log-entry';
 
 export const TodayScreen = () => {
-  const { user } = useUser();
+  const { profile } = useUserProfile();
   const { isLoading } = useLogs();
   useCrashDays();
   const todayEntries = useTodayEntries();
@@ -81,7 +81,9 @@ export const TodayScreen = () => {
 
         <View style={styles.header}>
           <Text style={styles.date}>{formatDate(new Date())}</Text>
-          <Text style={styles.greeting}>{getGreeting(user?.firstName)}</Text>
+          <Text style={styles.greeting}>
+            {getGreeting(profile.firstName || undefined)}
+          </Text>
         </View>
 
         {isLoading ? (

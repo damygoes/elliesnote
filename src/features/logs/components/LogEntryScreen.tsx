@@ -1,5 +1,6 @@
 import { useUser } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
+import { useUserProfile } from '@/shared/hooks/useUserProfile';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -13,6 +14,7 @@ import { LogFlashCalendar } from './LogFlashCalendar';
 
 export const LogEntryScreen = () => {
   const { user } = useUser();
+  const { profile } = useUserProfile();
   const userId = user?.id;
   const [selectedDate, setSelectedDate] = useState(toDateString());
 
@@ -40,7 +42,7 @@ export const LogEntryScreen = () => {
           noScroll
           userId={userId}
           selectedDate={selectedDate}
-          firstName={user?.firstName ?? undefined}
+          firstName={profile.firstName || undefined}
         />
       </ScrollView>
 
