@@ -5,6 +5,8 @@ import { useUser } from '@clerk/clerk-expo';
 import { requestPermissions } from '../services/healthKitService';
 import { useHealthPermissionStore } from '../store';
 
+const SCREENSHOT_MODE = process.env.EXPO_PUBLIC_SCREENSHOT_MODE === '1';
+
 const permissionKey = (userId: string) =>
   `@elliesnote/health-permission/${userId}`;
 
@@ -18,6 +20,10 @@ export function useHealthPermission() {
   useEffect(() => {
     if (!userId) {
       setHasPermission(null);
+      return;
+    }
+    if (SCREENSHOT_MODE) {
+      setHasPermission(true);
       return;
     }
     if (hasPermission !== null) return;

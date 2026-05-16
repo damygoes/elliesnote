@@ -10,6 +10,37 @@ import type { DailyHealthSnapshot } from '../types';
 const HK: Record<string, any> =
   (NativeModules as Record<string, any>)['AppleHealthKit'] ?? {};
 
+// ---------------------------------------------------------------------------
+// Screenshot / demo mode
+// Set EXPO_PUBLIC_SCREENSHOT_MODE=1 in .env.local before running on simulator
+// to inject realistic-looking health data for App Store screenshots.
+// ---------------------------------------------------------------------------
+const SCREENSHOT_MODE = process.env.EXPO_PUBLIC_SCREENSHOT_MODE === '1';
+
+// DJB2-inspired hash — deterministic, varied output per date string.
+function dateHash(seed: string): number {
+  let h = 5381;
+  for (let i = 0; i < seed.length; i++) {
+    h = ((h << 5) + h + seed.charCodeAt(i)) & 0xffff;
+  }
+  return Math.abs(h);
+}
+
+function mockSnapshot(date: string): DailyHealthSnapshot {
+  // Four independent hashes so metrics don't correlate with each other.
+  const h1 = dateHash(date);
+  const h2 = dateHash(date + 'r');
+  const h3 = dateHash(date + 'v');
+  const h4 = dateHash(date + 's');
+  return {
+    date,
+    sleepMinutes: 300 + (h1 % 240), // 5 h – 9 h
+    restingHeartRate: 57 + (h2 % 14), // 57 – 70 bpm
+    hrv: 22 + (h3 % 50), // 22 – 71 ms
+    steps: 1800 + (h4 % 7000), // 1 800 – 8 800
+  };
+}
+
 type DateWindow = { startDate: string; endDate: string };
 
 const PERMISSIONS = {
@@ -96,6 +127,7 @@ function getSingle(
 }
 
 export function requestPermissions(): Promise<boolean> {
+  if (SCREENSHOT_MODE) return Promise.resolve(true);
   if (Platform.OS !== 'ios') return Promise.resolve(false);
   if (typeof HK['initHealthKit'] !== 'function') return Promise.resolve(false);
   return new Promise((resolve) => {
@@ -116,6 +148,7 @@ const NULL_SNAPSHOT = (date: string): DailyHealthSnapshot => ({
 export async function fetchDailySnapshot(
   date: string,
 ): Promise<DailyHealthSnapshot> {
+  if (SCREENSHOT_MODE) return mockSnapshot(date);
   if (Platform.OS !== 'ios') return NULL_SNAPSHOT(date);
 
   const [sleepSamples, restingHRSamples, hrvSamples, stepsResult] =
