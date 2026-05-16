@@ -10,7 +10,9 @@ type SyncItem = {
 };
 
 function snapshotToItems(snapshot: DailyHealthSnapshot): SyncItem[] {
-  const measuredAt = new Date(`${snapshot.date}T00:00:00`).toISOString();
+  // Use UTC midnight so the stored date matches the local date key used for
+  // querying and chart attribution — avoids off-by-one-day shifts for UTC+ users.
+  const measuredAt = `${snapshot.date}T00:00:00.000Z`;
   const items: SyncItem[] = [];
 
   if (snapshot.sleepMinutes !== null)

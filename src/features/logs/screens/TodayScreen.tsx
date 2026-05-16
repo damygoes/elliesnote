@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: Spacing.xxl,
+    paddingHorizontal: Spacing.lg,
     paddingTop: Spacing['3xl'],
     paddingBottom: Spacing.xl,
     gap: Spacing.xl,

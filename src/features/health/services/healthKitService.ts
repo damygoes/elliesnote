@@ -42,11 +42,25 @@ function dayWindow(date: string): DateWindow {
   };
 }
 
-// Sum duration of actual sleep stages, excluding InBed (0) and Awake (2)
+// The native module returns value as a string, not the HealthKit integer enum.
+// iOS 16+ Apple Watch writes both an umbrella "ASLEEP" record and granular stage
+// records ("CORE", "DEEP", "REM") covering the same period — summing all would
+// double-count. Priority: stages → ASLEEP → INBED (last resort for apps that
+// only record in-bed intervals).
 function sumSleepMinutes(samples: HealthValue[]): number {
+  const val = (s: HealthValue) => String(s.value);
+
+  const stages = samples.filter((s) => {
+    const v = val(s);
+    return v === 'CORE' || v === 'DEEP' || v === 'REM';
+  });
+  const asleep = samples.filter((s) => val(s) === 'ASLEEP');
+  const inBed = samples.filter((s) => val(s) === 'INBED');
+
+  const toSum = stages.length > 0 ? stages : asleep.length > 0 ? asleep : inBed;
+
   let totalMs = 0;
-  for (const s of samples) {
-    if (s.value === 0 || s.value === 2) continue;
+  for (const s of toSum) {
     const ms = new Date(s.endDate).getTime() - new Date(s.startDate).getTime();
     if (ms > 0) totalMs += ms;
   }

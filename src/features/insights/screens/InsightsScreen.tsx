@@ -47,7 +47,12 @@ export const InsightsScreen = () => {
   const { hasPermission } = useHealthPermission();
   const [activeSeries, setActiveSeries] = useState<Set<SeriesKey>>(new Set());
 
-  useHealthSync(days);
+  const { isSyncing } = useHealthSync(days);
+  const wasSyncingRef = useRef(false);
+  useEffect(() => {
+    if (wasSyncingRef.current && !isSyncing) refresh();
+    wasSyncingRef.current = isSyncing;
+  }, [isSyncing, refresh]);
 
   const handleSeriesToggle = useCallback((key: SeriesKey) => {
     setActiveSeries((prev) => {
