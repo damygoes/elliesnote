@@ -55,7 +55,7 @@ export type InsightsData = {
 
 export type Range = 7 | 14 | 30;
 
-const cacheKey = (range: Range) => `@elliesnote/insights-v4-${range}`;
+const cacheKey = (range: Range) => `@elliesnote/insights-v5-${range}`;
 
 async function readCache(range: Range): Promise<InsightsData | null> {
   try {

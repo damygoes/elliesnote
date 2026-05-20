@@ -42,12 +42,49 @@ type Props = {
   crashDays: CrashDay[];
 };
 
-const DAY_ABBR = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
+const DAY_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
+const MONTH_ABBR = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+] as const;
 
-function getXLabel(dayKey: string, range: Range): string {
+// Indices of the days that should show a label on the x-axis.
+// Uses Set + clamp to stay in-bounds when days[] is shorter than expected
+// (e.g. during a range transition before the new API response arrives).
+function getTickIndices(count: number, range: Range): number[] {
+  if (count === 0) return [];
+  const last = count - 1;
+  // All 7 days, or stale data during a range transition to a wider view.
+  if (count <= 7) return Array.from({ length: count }, (_, i) => i);
+  // 14d — or 30d range that hasn't received its fresh data yet.
+  if (range === 14 || count <= 14) {
+    const mid = Math.min(7, last);
+    return [...new Set([0, mid, last])].sort((a, b) => a - b);
+  }
+  // 30d — weekly anchors deduped against last.
+  const ticks: number[] = [0];
+  for (let i = 7; i < last; i += 7) ticks.push(i);
+  ticks.push(last);
+  return [...new Set(ticks)];
+}
+
+function getTickLabel(dayKey: string, isLast: boolean, range: Range): string {
+  if (isLast) return 'Today';
+  if (!dayKey) return '';
   const d = new Date(`${dayKey}T00:00:00`);
+  if (isNaN(d.getTime())) return '';
   if (range === 7) return DAY_ABBR[d.getDay()] ?? '';
-  return String(d.getDate());
+  return `${MONTH_ABBR[d.getMonth()] ?? ''} ${d.getDate()}`;
 }
 
 function dotColor(energyLevel: number): string {
@@ -218,8 +255,7 @@ export const TrendChart = ({
   const hasCrashInRange = crashDayIndices.length > 0;
 
   const yKeys: (keyof ChartDatum)[] = ['y', ...activeHealthKeys];
-  const labels = days.map((dayKey) => getXLabel(dayKey, range));
-  const step = range === 30 ? 5 : 1;
+  const tickIndices = getTickIndices(days.length, range);
 
   return (
     <View style={styles.wrapper}>
@@ -314,14 +350,30 @@ export const TrendChart = ({
       </View>
 
       <View style={styles.xAxis}>
-        {labels.map((label, i) => (
-          <Text
-            key={i}
-            style={[styles.xLabel, i % step !== 0 && styles.hidden]}
-          >
-            {label}
-          </Text>
-        ))}
+        {tickIndices.map((idx, tickPos) => {
+          const isFirst = tickPos === 0;
+          const isLast = tickPos === tickIndices.length - 1;
+          return (
+            <Text
+              key={idx}
+              numberOfLines={1}
+              style={[
+                styles.xLabel,
+                isFirst
+                  ? styles.xLabelFirst
+                  : isLast
+                    ? styles.xLabelLast
+                    : {
+                        left: `${((idx + 0.5) / days.length) * 100}%`,
+                        marginLeft: -30,
+                        textAlign: 'center' as const,
+                      },
+              ]}
+            >
+              {getTickLabel(days[idx] ?? '', idx === days.length - 1, range)}
+            </Text>
+          );
+        })}
       </View>
 
       <View style={styles.legend}>
@@ -385,17 +437,22 @@ const styles = StyleSheet.create({
     color: Colors.light.text_muted,
   },
   xAxis: {
-    flexDirection: 'row',
-    paddingHorizontal: Spacing.sm,
+    position: 'relative',
+    height: 16,
   },
   xLabel: {
-    flex: 1,
-    textAlign: 'center',
+    position: 'absolute',
+    width: 60,
     ...Typography.small,
     color: Colors.light.text_muted,
   },
-  hidden: {
-    opacity: 0,
+  xLabelFirst: {
+    left: 0,
+    textAlign: 'left',
+  },
+  xLabelLast: {
+    right: 0,
+    textAlign: 'right',
   },
   legend: {
     flexDirection: 'row',
