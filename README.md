@@ -1,50 +1,69 @@
-# Welcome to your Expo app 👋
+# Elliesnote
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A daily energy and symptom tracker for people living with ME/CFS.
 
-## Get started
+Logging takes a few taps: rate your energy from 1 to 5, mark any symptoms, add a note if you want. Over time the app shows trends, flags crash days, and can pull sleep, heart rate and activity from Apple Health so you can see what lines up with your bad days.
 
-1. Install dependencies
+Everything is designed around low energy. Big touch targets, one decision per screen, calm colours, and as little typing as possible.
 
-   ```bash
-   npm install
-   ```
+## Stack
 
-2. Start the app
+- Expo SDK 54 / React Native 0.81 (new architecture)
+- expo-router for navigation
+- Zustand for state, Zod for validation
+- Clerk for auth, RevenueCat for subscriptions, Sentry for error reporting
+- react-native-health for Apple Health
+- Victory Native + Skia for charts
 
-   ```bash
-   npx expo start
-   ```
+## Getting started
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+You'll need Node 20+, pnpm 10+, and Xcode or Android Studio.
 
 ```bash
-npm run reset-project
+pnpm install
+pnpm ios        # or: pnpm android
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+The app uses native modules (HealthKit, RevenueCat), so it won't run in Expo Go. `pnpm ios` / `pnpm android` build a development client.
 
-## Learn more
+### Environment
 
-To learn more about developing your project with Expo, look at the following resources:
+Create `.env.local` in the project root:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+EXPO_PUBLIC_API_URL=
+EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=
+EXPO_PUBLIC_REVENUECAT_IOS_API_KEY=
+EXPO_PUBLIC_SENTRY_DSN=
+```
 
-## Join the community
+`EXPO_PUBLIC_API_URL` points at the Elliesnote backend, which lives in a separate repo.
 
-Join our community of developers creating universal apps.
+HealthKit doesn't work on the iOS simulator. Set `EXPO_PUBLIC_SCREENSHOT_MODE=1` to fill it with generated data instead (handy for screenshots).
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Scripts
+
+| Command          | What it does         |
+| ---------------- | -------------------- |
+| `pnpm start`     | Start the dev server |
+| `pnpm ios`       | Run on iOS           |
+| `pnpm android`   | Run on Android       |
+| `pnpm lint`      | ESLint               |
+| `pnpm typecheck` | `tsc --noEmit`       |
+| `pnpm format`    | Prettier             |
+
+## Project layout
+
+```
+src/
+  app/        routes (expo-router)
+  features/   auth, logs, history, insights, health, notifications, settings, subscription
+  shared/     components, hooks and utils used across features
+  services/   storage, notifications, logging, Sentry
+```
+
+Each feature keeps its own components, hooks, services, store and types. Features don't import from each other; anything shared goes in `src/shared/`.
+
+## Contributing
+
+A pre-commit hook runs the type-checker and lint-staged. Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `chore:` …).
